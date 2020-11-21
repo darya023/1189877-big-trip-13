@@ -1,7 +1,7 @@
 # Проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Дарья Дубовцева](https://up.htmlacademy.ru/ecmascript/13/user/1189877).
-* Наставник: `Неизвестно`.
+* Наставник: [Евгений Колегов](https://htmlacademy.ru/profile/id21780).
 
 ---
 
