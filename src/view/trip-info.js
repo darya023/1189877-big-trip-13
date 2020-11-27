@@ -1,13 +1,76 @@
-export const createTripInfoTemplate = () => {
+import {humanizeDate} from "../utils.js";
+
+const createTitle = (names) => {
+  if (names.length <= 3) {
+    return names.join(` &mdash; `);
+  }
+
+  const lastIndex = names.length - 1;
+  const result = names[0] + ` &mdash; ... &mdash; ` + names[lastIndex];
+  return result;
+};
+
+const createDate = (startDate, endDate) => {
+  const startMonth = startDate.getMonth();
+  const endMonth = endDate.getMonth();
+
+  if (startMonth !== endMonth) {
+    return humanizeDate(startDate, `MMM DD`) + `&nbsp;&mdash;&nbsp;` + humanizeDate(endDate, `MMM DD`);
+  }
+
+  return humanizeDate(startDate, `MMM DD`) + `&nbsp;&mdash;&nbsp;` + humanizeDate(endDate, `DD`);
+};
+
+const createTotalPrice = (prices, offers) => {
+  const price = prices.reduce((sum, current) => sum + current, 0);
+  const offersPrice = offers.reduce((sum, current) => {
+    let result = current.price;
+
+    if (!current.checked) {
+      result = 0;
+    }
+
+    return sum + result;
+  }, 0);
+
+  const result = price + offersPrice;
+
+  return result;
+};
+
+export const createTripInfoTemplate = (waypoints) => {
+  let sortByDateWaypoints = waypoints.map((waypoint) => waypoint);
+
+  sortByDateWaypoints.sort((a, b) => a.startDate - b.startDate);
+
+  const startDate = sortByDateWaypoints[0].startDate;
+  const endDate = sortByDateWaypoints[sortByDateWaypoints.length - 1].endDate;
+
+  let names = [];
+  let prices = [];
+  let offers = [];
+
+  for (const waypoint of sortByDateWaypoints) {
+    names.push(waypoint.destination.name);
+    prices.push(waypoint.price);
+    for (const offer of waypoint.type.offers) {
+      offers.push(offer);
+    }
+  }
+
+  const title = createTitle(names);
+  const date = createDate(startDate, endDate);
+  const totalPrice = createTotalPrice(prices, offers);
+
   return `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
-      <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
+      <h1 class="trip-info__title">${title}</h1>
 
-      <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
+      <p class="trip-info__dates">${date}</p>
     </div>
 
     <p class="trip-info__cost">
-      Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
+      Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalPrice}</span>
     </p>
   </section>`;
 };
