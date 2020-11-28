@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import {humanizeDate} from "../utils.js";
 
+// eslint-disable-next-line
 let duration = require(`dayjs/plugin/duration`);
 dayjs.extend(duration);
 
@@ -27,7 +28,7 @@ const getDurationTime = (time) => {
   ];
 
   const formattingLenght = 2;
-  const duration = [];
+  const durationTimeItems = [];
 
   for (const item of date) {
     const value = item.value;
@@ -37,11 +38,11 @@ const getDurationTime = (time) => {
       const elem = `0` + value;
       const formattedElem = elem.slice(elem.length - formattingLenght) + format;
 
-      duration.push(formattedElem);
+      durationTimeItems.push(formattedElem);
     }
   }
 
-  return duration.join(` `);
+  return durationTimeItems.join(` `);
 };
 
 const createOffers = (offers) => {
@@ -75,7 +76,7 @@ export const createWaypointTemplate = (waypoint) => {
   const endFullDate = humanizeDate(endDate, `YYYY-MM-DDTHH:mm`);
 
   const time = dayjs.duration(endDate - startDate);
-  const duration = getDurationTime(time);
+  const durationTime = getDurationTime(time);
   const offers = createOffers(type.offers);
 
   return `<li class="trip-events__item">
@@ -91,7 +92,7 @@ export const createWaypointTemplate = (waypoint) => {
         &mdash;
         <time class="event__end-time" datetime="${endFullDate}">${endTime}</time>
       </p>
-      <p class="event__duration">${duration}</p>
+      <p class="event__duration">${durationTime}</p>
     </div>
     <p class="event__price">
       &euro;&nbsp;<span class="event__price-value">${price}</span>
