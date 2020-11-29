@@ -132,8 +132,8 @@ export const generateWaypoint = () => {
         url: generateTypeImgURL(typeName),
         alt: `Event type icon`,
       },
-      offers: generateOffers()
     },
+    offers: generateOffers(),
     destination: {
       name: generateDestination(),
       description: generateDestinationDescr(),

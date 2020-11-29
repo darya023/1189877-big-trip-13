@@ -18,7 +18,7 @@ const createOffers = (offers) => {
 };
 
 export const createWaypointOffersTemplate = (waypoint) => {
-  const {type: {offers}} = waypoint;
+  const {offers} = waypoint;
 
   if (offers.some(Boolean)) {
     const createdOffers = createOffers(offers);

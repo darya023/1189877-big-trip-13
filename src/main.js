@@ -38,12 +38,14 @@ render(siteControlsElement, createTripFiltersTemplate(filters), `beforeend`);
 const tripEventsElement = siteBodyElement.querySelector(`.trip-events`);
 
 render(tripEventsElement, createTripSortingTemplate(sortingItems), `beforeend`);
-render(tripEventsElement, createTripTemplate(waypoints), `beforeend`);
+render(tripEventsElement, createTripTemplate(), `beforeend`);
 
 const tripListElement = tripEventsElement.querySelector(`.trip-events__list`);
 
 if (!waypoints.some(Boolean)) {
-  render(tripEventsElement, createSiteMsgTemplate(waypoints), `beforeend`);
+  const msg = `Click New Event to create your first point`;
+
+  render(tripEventsElement, createSiteMsgTemplate(msg), `beforeend`);
 }
 
 render(tripListElement, createWaypointFormTemplate(waypoints[0]), `afterbegin`);

@@ -39,7 +39,7 @@ const createTotalPrice = (prices, offers) => {
 };
 
 export const createTripInfoTemplate = (waypoints) => {
-  let sortByDateWaypoints = waypoints.map((waypoint) => waypoint);
+  let sortByDateWaypoints = waypoints.slice();
 
   sortByDateWaypoints.sort((a, b) => a.startDate - b.startDate);
 
@@ -53,7 +53,7 @@ export const createTripInfoTemplate = (waypoints) => {
   for (const waypoint of sortByDateWaypoints) {
     names.push(waypoint.destination.name);
     prices.push(waypoint.price);
-    for (const offer of waypoint.type.offers) {
+    for (const offer of waypoint.offers) {
       offers.push(offer);
     }
   }

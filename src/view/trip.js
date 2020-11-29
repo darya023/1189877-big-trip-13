@@ -1,8 +1,7 @@
 import dayjs from "dayjs";
 import {humanizeDate} from "../utils.js";
+import duration from "dayjs/plugin/duration";
 
-// eslint-disable-next-line
-let duration = require(`dayjs/plugin/duration`);
 dayjs.extend(duration);
 
 const getDurationTime = (time) => {
@@ -66,7 +65,7 @@ const createOffers = (offers) => {
 
 export const createWaypointTemplate = (waypoint) => {
 
-  const {startDate, endDate, price, type, destination, isFavorite} = waypoint;
+  const {startDate, endDate, price, type, offers, destination, isFavorite} = waypoint;
 
   const startDay = humanizeDate(startDate, `MMM DD`);
   const startDatetime = humanizeDate(startDate, `YYYY-MM-DD`);
@@ -77,7 +76,7 @@ export const createWaypointTemplate = (waypoint) => {
 
   const time = dayjs.duration(endDate - startDate);
   const durationTime = getDurationTime(time);
-  const offers = createOffers(type.offers);
+  const createdOffers = createOffers(offers);
 
   return `<li class="trip-events__item">
   <div class="event">
@@ -97,9 +96,9 @@ export const createWaypointTemplate = (waypoint) => {
     <p class="event__price">
       &euro;&nbsp;<span class="event__price-value">${price}</span>
     </p>
-    ${type.offers.length ? `<h4 class="visually-hidden">Offers:</h4>
+    ${offers.some(Boolean) ? `<h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-      ${offers}
+      ${createdOffers}
     </ul>` : ``}
     <button class="event__favorite-btn${isFavorite ? ` event__favorite-btn--active` : ``}" type="button">
       <span class="visually-hidden">Add to favorite</span>
