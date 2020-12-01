@@ -1,4 +1,6 @@
-const createFilters = (filters) => {
+import {createElement} from "../utils.js";
+
+const createFilterItems = (filters) => {
   let result = [];
 
   for (let i = 0; i < filters.length; i++) {
@@ -24,12 +26,35 @@ const createFilters = (filters) => {
   return result.join(``);
 };
 
-export const createTripFiltersTemplate = (filters) => {
-  const createdFilters = createFilters(filters);
+const createFilterTemplate = (filters) => {
+  const createdFilterItems = createFilterItems(filters);
 
   return `<h2 class="visually-hidden">Filter events</h2>
   <form class="trip-filters" action="#" method="get">
-    ${createdFilters}
+    ${createdFilterItems}
     <button class="visually-hidden" type="submit">Accept filter</button>
   </form>`;
 };
+
+export default class Filter {
+  constructor(filters) {
+    this._filters = filters;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilterTemplate(this._filters);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

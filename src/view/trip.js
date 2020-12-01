@@ -1,5 +1,5 @@
+import {humanizeDate, createElement} from "../utils.js";
 import dayjs from "dayjs";
-import {humanizeDate} from "../utils.js";
 import duration from "dayjs/plugin/duration";
 
 dayjs.extend(duration);
@@ -63,7 +63,7 @@ const createOffers = (offers) => {
 };
 
 
-export const createWaypointTemplate = (waypoint) => {
+const createWaypointTemplate = (waypoint) => {
 
   const {startDate, endDate, price, type, offers, destination, isFavorite} = waypoint;
 
@@ -112,3 +112,27 @@ export const createWaypointTemplate = (waypoint) => {
   </div>
 </li>`;
 };
+
+export default class Waypoint {
+  constructor(waypoint) {
+    this._waypoint = waypoint;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createWaypointTemplate(this._waypoint);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

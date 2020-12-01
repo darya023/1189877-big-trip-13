@@ -1,3 +1,6 @@
+import {WAYPOINT_FORM_DEFAULT} from "../const.js";
+import {createElement} from "../utils.js";
+
 const createDescription = (description) => {
   if (description) {
     return `<p class="event__destination-description">${description}</p>`;
@@ -32,23 +35,40 @@ const createPhoto = (photos) => {
   return result.join(``);
 };
 
-export const createWaypointDestinationTemplate = (waypoint = {}) => {
-  const {
-    destination = {
-      description: ``,
-      photos: ``
-    },
-  } = waypoint;
-  const description = createDescription(destination.description);
-  const photos = createPhotos(destination.photos);
+const createWaypointDestinationTemplate = (destination) => {
+  const {description, photos} = destination;
+  const waypointDescription = createDescription(description);
+  const waypointPhotos = createPhotos(photos);
 
-  if (destination.description || destination.photos.some(Boolean)) {
+  if (description || photos.some(Boolean)) {
     return `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      ${description}
-      ${photos}
+      ${waypointDescription}
+      ${waypointPhotos}
     </section>`;
   }
 
   return ``;
 };
+
+export default class WaypointDestination {
+  constructor(destination = WAYPOINT_FORM_DEFAULT.destination) {
+    this._destination = destination;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createWaypointDestinationTemplate(this._destination);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

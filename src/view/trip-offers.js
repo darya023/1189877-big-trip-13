@@ -1,3 +1,6 @@
+import {WAYPOINT_FORM_DEFAULT} from "../const.js";
+import {createElement} from "../utils.js";
+
 const createOffers = (offers) => {
   let result = [];
 
@@ -17,8 +20,7 @@ const createOffers = (offers) => {
   return result.join(``);
 };
 
-export const createWaypointOffersTemplate = (waypoint) => {
-  const {offers} = waypoint;
+const createWaypointOffersTemplate = (offers) => {
 
   if (offers.some(Boolean)) {
     const createdOffers = createOffers(offers);
@@ -34,3 +36,26 @@ export const createWaypointOffersTemplate = (waypoint) => {
 
   return ``;
 };
+
+export default class WaypointOffers {
+  constructor(offers = WAYPOINT_FORM_DEFAULT.offers) {
+    this._offers = offers;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createWaypointOffersTemplate(this._offers);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

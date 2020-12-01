@@ -1,4 +1,4 @@
-import {humanizeDate} from "../utils.js";
+import {humanizeDate, createElement} from "../utils.js";
 
 const createTitle = (names) => {
   if (names.length <= 3) {
@@ -38,7 +38,11 @@ const createTotalPrice = (prices, offers) => {
   return result;
 };
 
-export const createTripInfoTemplate = (waypoints) => {
+const createTripInfoTemplate = (waypoints) => {
+  if (!waypoints.some(Boolean)) {
+    return ``;
+  }
+
   let sortByDateWaypoints = waypoints.slice();
 
   sortByDateWaypoints.sort((a, b) => a.startDate - b.startDate);
@@ -74,3 +78,26 @@ export const createTripInfoTemplate = (waypoints) => {
     </p>
   </section>`;
 };
+
+export default class TripInfo {
+  constructor(waypoints = []) {
+    this._waypoints = waypoints;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripInfoTemplate(this._waypoints);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
