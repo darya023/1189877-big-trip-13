@@ -6,7 +6,7 @@ const filterMap = {
   past: (waypoints) => waypoints.filter((waypoint) => isPast(waypoint.startDate, waypoint.endDate)).length,
 };
 
-export const generateFilters = (waypoints) => {
+export const generateFilterItems = (waypoints) => {
   return Object.entries(filterMap).map(([name, countWaypoints]) => {
     return {
       name,

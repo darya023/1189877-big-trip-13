@@ -1,25 +1,25 @@
 import TripInfoView from "./view/trip-info.js";
 import SiteMenuView from "./view/site-menu.js";
-import FilterView from "./view/trip-filters.js";
-import SortingView from "./view/trip-sorting.js";
-import TripView from "./view/trip-list.js";
-import WaypointView from "./view/trip.js";
-import WaypointFormView from "./view/trip-form.js";
-import SiteMsgView from "./view/trip-msg.js";
-import WaypointOffersView from "./view/trip-offers.js";
-import WaypointDestinationView from "./view/trip-destination.js";
-import {generateWaypoint} from "./mock/trip.js";
-import {generateFilters} from "./mock/trip-filters.js";
-import {generateMenuItems} from "./mock/site-menu.js";
-import {generateSortingItems} from "./mock/trip-sorting.js";
+import FilterView from "./view/filter.js";
+import SortingView from "./view/sorting.js";
+import TripView from "./view/trip.js";
+import WaypointView from "./view/waypoint.js";
+import WaypointFormView from "./view/waypoint-form.js";
+import SiteMsgView from "./view/site-msg.js";
+import WaypointOffersView from "./view/waypoint-offers.js";
+import WaypointDestinationView from "./view/waypoint-destination.js";
+import {generateWaypoint} from "./mock/waypoint.js";
+import {generateFilterItems} from "./mock/filter-items.js";
+import {generateSiteMenuItems} from "./mock/site-menu-items.js";
+import {generateSortingItems} from "./mock/sorting.js";
 import {render, RenderPosition} from "./utils.js";
 
 const WAYPOINTS_COUNT = 20;
 const waypoints = new Array(WAYPOINTS_COUNT).fill().map(generateWaypoint);
 waypoints.sort((a, b) => a.startDate - b.startDate);
 
-const filters = generateFilters(waypoints);
-const menuItems = generateMenuItems();
+const filterItems = generateFilterItems(waypoints);
+const menuItems = generateSiteMenuItems();
 const sortingItems = generateSortingItems();
 
 const renderWaypoint = (tripElement, waypoint) => {
@@ -65,7 +65,7 @@ render(tripMainElement, new TripInfoView(waypoints).getElement(), RenderPosition
 const siteControlsElement = tripMainElement.querySelector(`.trip-controls`);
 
 render(siteControlsElement, new SiteMenuView(menuItems).getElement(), RenderPosition.AFTERBEGIN);
-render(siteControlsElement, new FilterView(filters).getElement(), RenderPosition.BEFOREEND);
+render(siteControlsElement, new FilterView(filterItems).getElement(), RenderPosition.BEFOREEND);
 
 const tripEventsElement = siteBodyElement.querySelector(`.trip-events`);
 const tripComponent = new TripView();
