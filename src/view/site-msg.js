@@ -1,16 +1,17 @@
 import {createElement} from "../utils.js";
 
-const createTripTemplate = () => {
-  return `<ul class="trip-events__list"></ul>`;
+const createSiteMsgTemplate = (msg) => {
+  return `<p class="trip-events__msg">${msg}</p>`;
 };
 
-export default class Trip {
-  constructor() {
+export default class SiteMsg {
+  constructor(msg) {
+    this._msg = msg;
     this._element = null;
   }
 
   getTemplate() {
-    return createTripTemplate();
+    return createSiteMsgTemplate(this._msg);
   }
 
   getElement() {

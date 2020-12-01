@@ -1,6 +1,6 @@
 import {TYPES} from "../const.js";
-import {DESTINATIONS} from "../const.js";
-import {humanizeDate} from "../utils.js";
+import {DESTINATIONS, WAYPOINT_FORM_DEFAULT} from "../const.js";
+import {humanizeDate, createElement} from "../utils.js";
 
 const createWaypointDropdown = () => {
   let result = [];
@@ -30,22 +30,8 @@ const createDestinationsDropdown = () => {
 };
 
 
-export const createWaypointFormTemplate = (waypoint = {}) => {
-  const {
-    type = {
-      name: TYPES[0],
-      img: {
-        url: `img/icons/${TYPES[0].toLowerCase()}.png`,
-        alt: `Event type icon`,
-      },
-    },
-    destination = {
-      name: ``
-    },
-    startDate = ``,
-    endDate = ``,
-    price = ``
-  } = waypoint;
+const createWaypointFormTemplate = (waypoint) => {
+  const {type, destination, startDate, endDate, price} = waypoint;
 
   let startTime = humanizeDate(startDate, `DD/MM/YY HH:mm`);
   let endTime = humanizeDate(endDate, `DD/MM/YY HH:mm`);
@@ -113,3 +99,26 @@ export const createWaypointFormTemplate = (waypoint = {}) => {
   </form>
 </li>`;
 };
+
+export default class WaypointForm {
+  constructor(waypointForm = WAYPOINT_FORM_DEFAULT) {
+    this._waypointForm = waypointForm;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createWaypointFormTemplate(this._waypointForm);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

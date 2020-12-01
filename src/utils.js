@@ -29,3 +29,35 @@ export const isFuture = (startDate, endDate) => {
   }
   return false;
 };
+
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};
+
+export const render = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
+};
+
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+
+  if (template === ``) {
+    return ``;
+  }
+
+  newElement.innerHTML = template;
+
+  if (newElement.children.length > 1) {
+    return newElement;
+  }
+
+  return newElement.firstChild;
+};

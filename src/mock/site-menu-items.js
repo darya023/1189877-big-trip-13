@@ -1,4 +1,4 @@
-export const generateMenuItems = () => {
+export const generateSiteMenuItems = () => {
 
   return [
     {
