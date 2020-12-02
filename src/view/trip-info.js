@@ -39,10 +39,6 @@ const createTotalPrice = (prices, offers) => {
 };
 
 const createTripInfoTemplate = (waypoints) => {
-  if (!waypoints.some(Boolean)) {
-    return ``;
-  }
-
   let sortByDateWaypoints = waypoints.slice();
 
   sortByDateWaypoints.sort((a, b) => a.startDate - b.startDate);
@@ -80,7 +76,7 @@ const createTripInfoTemplate = (waypoints) => {
 };
 
 export default class TripInfo {
-  constructor(waypoints = []) {
+  constructor(waypoints) {
     this._waypoints = waypoints;
     this._element = null;
   }
