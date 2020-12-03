@@ -45,6 +45,7 @@ const renderWaypoint = (tripElement, waypoint) => {
 
   const onEscKeyDown = (event) => {
     if (event.key === `Esc` || event.key === `Escape`) {
+      event.preventDefault();
       replaceWaypointFormToWaypoint();
       document.removeEventListener(`keydown`, onEscKeyDown);
     }
@@ -59,6 +60,7 @@ const renderWaypoint = (tripElement, waypoint) => {
 
   waypointFormComponentBtn.addEventListener(`click`, () => {
     replaceWaypointFormToWaypoint();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
   const waypointForm = waypointFormComponent.getElement().querySelector(`form`);
