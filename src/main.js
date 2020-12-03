@@ -43,8 +43,24 @@ const renderWaypoint = (tripElement, waypoint) => {
 
   const waypointComponentBtn = waypointComponent.getElement().querySelector(`.event__rollup-btn`);
 
+  const onEscKeyDown = (event) => {
+    if (event.key === `Esc` || event.key === `Escape`) {
+      event.preventDefault();
+      replaceWaypointFormToWaypoint();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
   waypointComponentBtn.addEventListener(`click`, () => {
     replaceWaypointToWaypointForm();
+    document.addEventListener(`keydown`, onEscKeyDown);
+  });
+
+  const waypointFormComponentBtn = waypointFormComponent.getElement().querySelector(`.event__rollup-btn`);
+
+  waypointFormComponentBtn.addEventListener(`click`, () => {
+    replaceWaypointFormToWaypoint();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
   const waypointForm = waypointFormComponent.getElement().querySelector(`form`);
@@ -52,6 +68,7 @@ const renderWaypoint = (tripElement, waypoint) => {
   waypointForm.addEventListener(`submit`, (event) => {
     event.preventDefault();
     replaceWaypointFormToWaypoint();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
   render(tripElement, waypointComponent.getElement(), RenderPosition.BEFOREEND);
@@ -60,7 +77,6 @@ const renderWaypoint = (tripElement, waypoint) => {
 const siteBodyElement = document.querySelector(`.page-body`);
 const tripMainElement = siteBodyElement.querySelector(`.trip-main`);
 
-render(tripMainElement, new TripInfoView(waypoints).getElement(), RenderPosition.AFTERBEGIN);
 
 const siteControlsElement = tripMainElement.querySelector(`.trip-controls`);
 
@@ -68,18 +84,22 @@ render(siteControlsElement, new SiteMenuView(menuItems).getElement(), RenderPosi
 render(siteControlsElement, new FilterView(filterItems).getElement(), RenderPosition.BEFOREEND);
 
 const tripEventsElement = siteBodyElement.querySelector(`.trip-events`);
-const tripComponent = new TripView();
-
-render(tripEventsElement, new SortingView(sortingItems).getElement(), RenderPosition.BEFOREEND);
-render(tripEventsElement, tripComponent.getElement(), RenderPosition.BEFOREEND);
 
 if (!waypoints.some(Boolean)) {
   const msg = `Click New Event to create your first point`;
-
+  
   render(tripEventsElement, new SiteMsgView(msg).getElement(), RenderPosition.BEFOREEND);
-}
 
-for (let i = 0; i < WAYPOINTS_COUNT; i++) {
-  renderWaypoint(tripComponent.getElement(), waypoints[i]);
-}
+  } else {
 
+  render(tripMainElement, new TripInfoView(waypoints).getElement(), RenderPosition.AFTERBEGIN);
+
+  const tripComponent = new TripView();
+  
+  render(tripEventsElement, new SortingView(sortingItems).getElement(), RenderPosition.BEFOREEND);
+  render(tripEventsElement, tripComponent.getElement(), RenderPosition.BEFOREEND);
+
+  for (let i = 0; i < WAYPOINTS_COUNT; i++) {
+    renderWaypoint(tripComponent.getElement(), waypoints[i]);
+  }
+}
