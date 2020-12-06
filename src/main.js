@@ -29,9 +29,19 @@ const renderWaypoint = (tripElement, waypoint) => {
     if (event.key === `Esc` || event.key === `Escape`) {
       event.preventDefault();
       replace(waypointComponent, waypointFormComponent);
+      document.removeEventListener(`click`, onClickWaypointBtn);
       document.removeEventListener(`keydown`, onEscKeyDown);
     }
   };
+  const onClickWaypointBtn = (event) => {
+    const currentWaypointRollupBtn = waypointComponent.getElement().querySelector(`.event__rollup-btn`);
+
+    if (event.target !== currentWaypointRollupBtn && event.target.className === `event__rollup-btn`) {
+      replace(waypointComponent, waypointFormComponent);
+      document.removeEventListener(`click`, onClickWaypointBtn);
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  }
 
   waypointComponent.setWaypointClickHandler(() => {
     const tripDetails = waypointFormComponent.getElement().querySelector(`.event__details`);
@@ -40,16 +50,19 @@ const renderWaypoint = (tripElement, waypoint) => {
     render(tripDetails, new WaypointOffersView(waypoint.offers), RenderPosition.AFTERBEGIN);
     render(tripDetails, new WaypointDestinationView(waypoint.destination), RenderPosition.BEFOREEND);
     replace(waypointFormComponent, waypointComponent);
+    document.addEventListener(`click`, onClickWaypointBtn);
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   waypointFormComponent.setFormClickHandler(() => {
     replace(waypointComponent, waypointFormComponent);
+    document.removeEventListener(`click`, onClickWaypointBtn);
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
   waypointFormComponent.setFormSubmitHandler(() => {
     replace(waypointComponent, waypointFormComponent);
+    document.removeEventListener(`click`, onClickWaypointBtn);
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
   
