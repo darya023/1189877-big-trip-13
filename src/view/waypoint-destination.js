@@ -1,5 +1,5 @@
+import AbstractView from "./abstract.js";
 import {WAYPOINT_FORM_DEFAULT} from "../const.js";
-import {createElement} from "../utils.js";
 
 const createDescription = (description) => {
   if (description) {
@@ -51,24 +51,14 @@ const createWaypointDestinationTemplate = (destination) => {
   return ``;
 };
 
-export default class WaypointDestination {
+export default class WaypointDestination extends AbstractView{
   constructor(destination = WAYPOINT_FORM_DEFAULT.destination) {
+    super();
     this._destination = destination;
     this._element = null;
   }
 
   getTemplate() {
     return createWaypointDestinationTemplate(this._destination);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

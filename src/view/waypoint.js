@@ -1,4 +1,5 @@
-import {humanizeDate, createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
+import {humanizeDate} from "../utils/utils.js";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 
@@ -113,26 +114,26 @@ const createWaypointTemplate = (waypoint) => {
 </li>`;
 };
 
-export default class Waypoint {
+export default class Waypoint extends AbstractView{
   constructor(waypoint) {
+    super();
     this._waypoint = waypoint;
-
     this._element = null;
+    this._waypointClickHandler = this._waypointClickHandler.bind(this);
   }
 
   getTemplate() {
     return createWaypointTemplate(this._waypoint);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _waypointClickHandler() {
+    this._callback.waypointClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setWaypointClickHandler(callback) {
+    const rollupBtn = this.getElement().querySelector(`.event__rollup-btn`);
+
+    this._callback.waypointClick = callback;
+    rollupBtn.addEventListener(`click`, this._waypointClickHandler);
   }
 }

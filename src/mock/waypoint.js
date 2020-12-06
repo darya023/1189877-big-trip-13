@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import {TYPES} from "../const.js";
 import {DESTINATIONS} from "../const.js";
 import {DESCRIPTION} from "../const.js";
-import {getRandomInteger} from "../utils.js";
+import {getRandomInteger} from "../utils/utils.js";
 
 const generateTypeName = () => {
   const randomIndex = getRandomInteger(0, TYPES.length - 1);

@@ -1,6 +1,7 @@
+import AbstractView from "./abstract.js";
 import {TYPES} from "../const.js";
 import {DESTINATIONS, WAYPOINT_FORM_DEFAULT} from "../const.js";
-import {humanizeDate, createElement} from "../utils.js";
+import {humanizeDate} from "../utils/utils.js";
 
 const createWaypointDropdown = () => {
   let result = [];
@@ -100,25 +101,39 @@ const createWaypointFormTemplate = (waypoint) => {
 </li>`;
 };
 
-export default class WaypointForm {
+export default class WaypointForm extends AbstractView{
   constructor(waypointForm = WAYPOINT_FORM_DEFAULT) {
+    super();
     this._waypointForm = waypointForm;
     this._element = null;
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formClickHandler = this._formClickHandler.bind(this);
   }
 
   getTemplate() {
     return createWaypointFormTemplate(this._waypointForm);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _formSubmitHandler(event) {
+    event.preventDefault();
+    this._callback.formSubmit();
   }
 
-  removeElement() {
-    this._element = null;
+  _formClickHandler(event) {
+    this._callback.formClick();
+  }
+
+  setFormSubmitHandler(callback) {
+    const form = this.getElement().querySelector(`form`);
+
+    this._callback.formSubmit = callback;
+    form.addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  setFormClickHandler(callback) {
+    const rollupBtn = this.getElement().querySelector(`.event__rollup-btn`);
+
+    this._callback.formClick = callback;
+    rollupBtn.addEventListener(`click`, this._formClickHandler);
   }
 }

@@ -1,4 +1,4 @@
-import {isPast, isFuture} from "../utils.js";
+import {isPast, isFuture} from "../utils/waypoint.js";
 
 const filterMap = {
   everything: (waypoints) => waypoints.length,
