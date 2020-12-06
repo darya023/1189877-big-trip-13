@@ -114,7 +114,7 @@ const createWaypointTemplate = (waypoint) => {
 </li>`;
 };
 
-export default class Waypoint extends AbstractView{
+export default class Waypoint extends AbstractView {
   constructor(waypoint) {
     super();
     this._waypoint = waypoint;

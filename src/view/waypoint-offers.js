@@ -37,7 +37,7 @@ const createWaypointOffersTemplate = (offers) => {
   return ``;
 };
 
-export default class WaypointOffers extends AbstractView{
+export default class WaypointOffers extends AbstractView {
   constructor(offers = WAYPOINT_FORM_DEFAULT.offers) {
     super();
     this._offers = offers;

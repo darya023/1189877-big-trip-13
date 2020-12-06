@@ -41,7 +41,7 @@ const renderWaypoint = (tripElement, waypoint) => {
       document.removeEventListener(`click`, onClickWaypointBtn);
       document.removeEventListener(`keydown`, onEscKeyDown);
     }
-  }
+  };
 
   waypointComponent.setWaypointClickHandler(() => {
     const tripDetails = waypointFormComponent.getElement().querySelector(`.event__details`);
@@ -65,7 +65,7 @@ const renderWaypoint = (tripElement, waypoint) => {
     document.removeEventListener(`click`, onClickWaypointBtn);
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
-  
+
   render(tripElement, waypointComponent, RenderPosition.BEFOREEND);
 };
 
@@ -80,15 +80,15 @@ const tripEventsElement = siteBodyElement.querySelector(`.trip-events`);
 
 if (!waypoints.some(Boolean)) {
   const msg = `Click New Event to create your first point`;
-  
+
   render(tripEventsElement, new SiteMsgView(msg), RenderPosition.BEFOREEND);
 
-  } else {
+} else {
 
   render(tripMainElement, new TripInfoView(waypoints), RenderPosition.AFTERBEGIN);
 
   const tripComponent = new TripView();
-  
+
   render(tripEventsElement, new SortingView(sortingItems), RenderPosition.BEFOREEND);
   render(tripEventsElement, tripComponent, RenderPosition.BEFOREEND);
 

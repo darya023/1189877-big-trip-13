@@ -101,7 +101,7 @@ const createWaypointFormTemplate = (waypoint) => {
 </li>`;
 };
 
-export default class WaypointForm extends AbstractView{
+export default class WaypointForm extends AbstractView {
   constructor(waypointForm = WAYPOINT_FORM_DEFAULT) {
     super();
     this._waypointForm = waypointForm;
@@ -119,7 +119,7 @@ export default class WaypointForm extends AbstractView{
     this._callback.formSubmit();
   }
 
-  _formClickHandler(event) {
+  _formClickHandler() {
     this._callback.formClick();
   }
 
