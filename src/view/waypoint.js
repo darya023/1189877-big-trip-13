@@ -122,11 +122,11 @@ export default class Waypoint extends AbstractView {
     this._waypointClickHandler = this._waypointClickHandler.bind(this);
     this._rollupButton = this.setChildElement(`.event__rollup-btn`);
   }
-  
+
   getTemplate() {
     return createWaypointTemplate(this._waypoint);
   }
-  
+
   setChildElement(selector) {
     return this.getElement().querySelector(selector);
   }

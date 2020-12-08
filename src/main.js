@@ -49,7 +49,7 @@ const renderWaypoint = (tripElement, waypoint) => {
   };
 
   waypointComponent.setWaypointClickHandler(() => {
-    
+
     replace(waypointFormComponent, waypointComponent);
 
     document.addEventListener(`click`, onClickWaypointButton);
