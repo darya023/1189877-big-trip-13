@@ -120,10 +120,19 @@ export default class Waypoint extends AbstractView {
     this._waypoint = waypoint;
     this._element = null;
     this._waypointClickHandler = this._waypointClickHandler.bind(this);
+    this._rollupButton = this.setChildElement(`.event__rollup-btn`);
   }
-
+  
   getTemplate() {
     return createWaypointTemplate(this._waypoint);
+  }
+  
+  setChildElement(selector) {
+    return this.getElement().querySelector(selector);
+  }
+
+  getRollupButton() {
+    return this._rollupButton;
   }
 
   _waypointClickHandler() {
@@ -131,9 +140,7 @@ export default class Waypoint extends AbstractView {
   }
 
   setWaypointClickHandler(callback) {
-    const rollupBtn = this.getElement().querySelector(`.event__rollup-btn`);
-
     this._callback.waypointClick = callback;
-    rollupBtn.addEventListener(`click`, this._waypointClickHandler);
+    this._rollupButton.addEventListener(`click`, this._waypointClickHandler);
   }
 }

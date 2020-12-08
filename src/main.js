@@ -25,44 +25,46 @@ const sortingItems = generateSortingItems();
 const renderWaypoint = (tripElement, waypoint) => {
   const waypointComponent = new WaypointView(waypoint);
   const waypointFormComponent = new WaypointFormView(waypoint);
+  const waypointDetails = waypointFormComponent.getWaypointDetails();
+  waypointDetails.innerHTML = ``;
+  render(waypointDetails, new WaypointOffersView(waypoint.offers), RenderPosition.AFTERBEGIN);
+  render(waypointDetails, new WaypointDestinationView(waypoint.destination), RenderPosition.BEFOREEND);
+
   const onEscKeyDown = (event) => {
     if (event.key === `Esc` || event.key === `Escape`) {
       event.preventDefault();
       replace(waypointComponent, waypointFormComponent);
-      document.removeEventListener(`click`, onClickWaypointBtn);
+      document.removeEventListener(`click`, onClickWaypointButton);
       document.removeEventListener(`keydown`, onEscKeyDown);
     }
   };
-  const onClickWaypointBtn = (event) => {
-    const currentWaypointRollupBtn = waypointComponent.getElement().querySelector(`.event__rollup-btn`);
+  const onClickWaypointButton = (event) => {
+    const currentWaypointRollupButton = waypointComponent.getRollupButton();
 
-    if (event.target !== currentWaypointRollupBtn && event.target.className === `event__rollup-btn`) {
+    if (event.target !== currentWaypointRollupButton && event.target.className === `event__rollup-btn`) {
       replace(waypointComponent, waypointFormComponent);
-      document.removeEventListener(`click`, onClickWaypointBtn);
+      document.removeEventListener(`click`, onClickWaypointButton);
       document.removeEventListener(`keydown`, onEscKeyDown);
     }
   };
 
   waypointComponent.setWaypointClickHandler(() => {
-    const tripDetails = waypointFormComponent.getElement().querySelector(`.event__details`);
-
-    tripDetails.innerHTML = ``;
-    render(tripDetails, new WaypointOffersView(waypoint.offers), RenderPosition.AFTERBEGIN);
-    render(tripDetails, new WaypointDestinationView(waypoint.destination), RenderPosition.BEFOREEND);
+    
     replace(waypointFormComponent, waypointComponent);
-    document.addEventListener(`click`, onClickWaypointBtn);
+
+    document.addEventListener(`click`, onClickWaypointButton);
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   waypointFormComponent.setFormClickHandler(() => {
     replace(waypointComponent, waypointFormComponent);
-    document.removeEventListener(`click`, onClickWaypointBtn);
+    document.removeEventListener(`click`, onClickWaypointButton);
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
   waypointFormComponent.setFormSubmitHandler(() => {
     replace(waypointComponent, waypointFormComponent);
-    document.removeEventListener(`click`, onClickWaypointBtn);
+    document.removeEventListener(`click`, onClickWaypointButton);
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
