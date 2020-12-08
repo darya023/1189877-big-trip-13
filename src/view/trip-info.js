@@ -1,4 +1,5 @@
-import {humanizeDate, createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
+import {humanizeDate} from "../utils/utils.js";
 
 const createTitle = (names) => {
   if (names.length <= 3) {
@@ -75,25 +76,13 @@ const createTripInfoTemplate = (waypoints) => {
   </section>`;
 };
 
-export default class TripInfo {
+export default class TripInfo extends AbstractView {
   constructor(waypoints) {
+    super();
     this._waypoints = waypoints;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripInfoTemplate(this._waypoints);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

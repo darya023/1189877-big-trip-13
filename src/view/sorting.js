@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 
 const createSorting = (sortingItems) => {
   let result = [];
@@ -34,25 +34,13 @@ const createTripSortingTemplate = (sortingItems) => {
   </form>`;
 };
 
-export default class Sorting {
+export default class Sorting extends AbstractView {
   constructor(sortingItems) {
+    super();
     this._sortingItems = sortingItems;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripSortingTemplate(this._sortingItems);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
