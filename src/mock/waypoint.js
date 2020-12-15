@@ -3,6 +3,7 @@ import {TYPES} from "../const.js";
 import {DESTINATIONS} from "../const.js";
 import {DESCRIPTION} from "../const.js";
 import {getRandomInteger} from "../utils/utils.js";
+import {nanoid} from "nanoid";
 
 const generateTypeName = () => {
   const randomIndex = getRandomInteger(0, TYPES.length - 1);
@@ -121,11 +122,16 @@ const generateDate = (start) => {
   return date;
 };
 
+const generateId = () => {
+  return nanoid();
+};
+
 export const generateWaypoint = () => {
   const typeName = generateTypeName();
   const startDate = generateDate();
 
   return {
+    id: generateId(),
     type: {
       name: typeName,
       img: {

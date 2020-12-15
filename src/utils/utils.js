@@ -11,3 +11,17 @@ export const getRandomInteger = (a = 0, b = 1) => {
 export const humanizeDate = (date, format) => {
   return dayjs(date).format(format);
 };
+
+export const update = (items, updatedItem) => {
+  const index = items.findIndex((item) => item.id === updatedItem.id);
+
+  if (index === -1) {
+    return items;
+  }
+
+  return [
+    ...items.slice(0, index),
+    updatedItem,
+    ...items.slice(index + 1)
+  ];
+};
