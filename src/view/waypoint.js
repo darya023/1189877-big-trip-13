@@ -120,7 +120,9 @@ export default class Waypoint extends AbstractView {
     this._waypoint = waypoint;
     this._element = null;
     this._waypointClickHandler = this._waypointClickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._rollupButton = this.setChildElement(`.event__rollup-btn`);
+    this._favoriteButton = this.setChildElement(`.event__favorite-btn`);
   }
 
   getTemplate() {
@@ -139,8 +141,18 @@ export default class Waypoint extends AbstractView {
     this._callback.waypointClick();
   }
 
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favoriteClick();
+  }
+
   setWaypointClickHandler(callback) {
     this._callback.waypointClick = callback;
     this._rollupButton.addEventListener(`click`, this._waypointClickHandler);
+  }
+
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this._favoriteButton.addEventListener(`click`, this._favoriteClickHandler);
   }
 }
