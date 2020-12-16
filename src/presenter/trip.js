@@ -63,7 +63,7 @@ export default class Trip {
         sortByPrice(this._waypoints);
         break;
       default:
-        sortByDate(this._waypoints);
+        throw new Error(`Sorting type not implemented: `+this._currentSortingType);
     }
   }
 
