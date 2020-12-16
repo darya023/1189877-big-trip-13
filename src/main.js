@@ -10,8 +10,6 @@ import {render, RenderPosition} from "./utils/render.js";
 
 const WAYPOINTS_COUNT = 20;
 const waypoints = new Array(WAYPOINTS_COUNT).fill().map(generateWaypoint);
-waypoints.sort((a, b) => a.startDate - b.startDate);
-
 const filterItems = generateFilterItems(waypoints);
 const menuItems = generateSiteMenuItems();
 const sortingItems = generateSortingItems();
