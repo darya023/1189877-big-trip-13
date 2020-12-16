@@ -128,7 +128,7 @@ export default class Waypoint extends AbstractView {
   getTemplate() {
     return createWaypointTemplate(this._waypoint);
   }
-  
+
   getRollupButton() {
     return this._rollupButton;
   }

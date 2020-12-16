@@ -44,15 +44,15 @@ export default class Sorting extends AbstractView {
     this._sortingElements = this._getChildElements(`.trip-sort__input`);
     this._sortingType = SortingType.DAY;
   }
-  
+
   getTemplate() {
     return createTripSortingTemplate(this._sortingItems);
   }
-  
+
   _getChildElements(selector) {
     return this.getElement().querySelectorAll(selector);
   }
-  
+
   _sortingItemClickHandler(event) {
     this._sortingType = event.target.dataset.sortingtype.toUpperCase();
     this._callback.sortingItemClick(this._sortingType);

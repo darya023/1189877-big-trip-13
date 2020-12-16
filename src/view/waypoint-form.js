@@ -115,15 +115,15 @@ export default class WaypointForm extends AbstractView {
   getTemplate() {
     return createWaypointFormTemplate(this._waypointForm);
   }
-  
+
   getRollupButton() {
     return this._rollupButton;
   }
-  
+
   getWaypointDetails() {
     return this._waypointDetails;
   }
-  
+
   _getChildElement(selector) {
     return this.getElement().querySelector(selector);
   }
