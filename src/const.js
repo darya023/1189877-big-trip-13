@@ -37,3 +37,11 @@ export const WAYPOINT_FORM_DEFAULT = {
   endDate: ``,
   price: ``
 };
+
+export const SortingType = {
+  DAY: `DAY`,
+  EVENT: `EVENT`,
+  TIME: `TIME`,
+  PRICE: `PRICE`,
+  OFFER: `OFFER`
+};

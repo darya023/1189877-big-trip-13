@@ -68,6 +68,11 @@ export default class Waypoint {
     }
   }
 
+  destroy() {
+    remove(this._waypointComponent);
+    remove(this._waypointFormComponent);
+  }
+
   _replaceFormToWaypoint() {
     replace(this._waypointComponent, this._waypointFormComponent);
     document.removeEventListener(`keydown`, this._onEscKeyDown);

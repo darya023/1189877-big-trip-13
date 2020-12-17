@@ -1,4 +1,5 @@
 import AbstractView from "./abstract.js";
+import {SortingType} from "../const.js";
 
 const createSorting = (sortingItems) => {
   let result = [];
@@ -12,6 +13,7 @@ const createSorting = (sortingItems) => {
         type="radio" 
         name="trip-sort" 
         value="sort-${sortingItems[i].value}"
+        data-sortingType="${SortingType[sortingItems[i].value.toUpperCase()]}"
         ${(i === 0) ? ` checked` : ``}
         ${sortingItems[i].disabled ? `disabled` : ``}
       >
@@ -38,9 +40,28 @@ export default class Sorting extends AbstractView {
   constructor(sortingItems) {
     super();
     this._sortingItems = sortingItems;
+    this._sortingItemClickHandler = this._sortingItemClickHandler.bind(this);
+    this._sortingElements = this._getChildElements(`.trip-sort__input`);
+    this._sortingType = SortingType.DAY;
   }
 
   getTemplate() {
     return createTripSortingTemplate(this._sortingItems);
+  }
+
+  _getChildElements(selector) {
+    return this.getElement().querySelectorAll(selector);
+  }
+
+  _sortingItemClickHandler(event) {
+    this._sortingType = event.target.dataset.sortingtype.toUpperCase();
+    this._callback.sortingItemClick(this._sortingType);
+  }
+
+  setSortingItemClickHandler(callback) {
+    this._callback.sortingItemClick = callback;
+    this._sortingElements.forEach((item) => {
+      item.addEventListener(`click`, this._sortingItemClickHandler);
+    });
   }
 }

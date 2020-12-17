@@ -108,16 +108,12 @@ export default class WaypointForm extends AbstractView {
     this._element = null;
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formClickHandler = this._formClickHandler.bind(this);
-    this._rollupButton = this.setChildElement(`.event__rollup-btn`);
-    this._waypointDetails = this.setChildElement(`.event__details`);
+    this._rollupButton = this._getChildElement(`.event__rollup-btn`);
+    this._waypointDetails = this._getChildElement(`.event__details`);
   }
 
   getTemplate() {
     return createWaypointFormTemplate(this._waypointForm);
-  }
-
-  setChildElement(selector) {
-    return this.getElement().querySelector(selector);
   }
 
   getRollupButton() {
@@ -126,6 +122,10 @@ export default class WaypointForm extends AbstractView {
 
   getWaypointDetails() {
     return this._waypointDetails;
+  }
+
+  _getChildElement(selector) {
+    return this.getElement().querySelector(selector);
   }
 
   _formSubmitHandler(event) {
