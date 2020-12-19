@@ -47,7 +47,12 @@ export default class Waypoint {
       replace(this._waypointComponent, prevWaypointComponent);
     }
 
+    if (this._mode === Mode.EDITING) {
+      replace(this._waypointFormComponent, prevWaypointFormComponent);
+    }
+
     remove(prevWaypointComponent);
+    remove(prevWaypointFormComponent);
   }
 
   resetViewMode() {
@@ -78,6 +83,7 @@ export default class Waypoint {
   _onEscKeyDown(event) {
     if (event.key === `Esc` || event.key === `Escape`) {
       event.preventDefault();
+      this._waypointFormComponent.reset(this._waypoint);
       this._replaceFormToWaypoint();
     }
   }
@@ -94,7 +100,8 @@ export default class Waypoint {
     );
   }
 
-  _handleFormSubmit() {
+  _handleFormSubmit(waypoint) {
+    this._changeData(waypoint);
     this._replaceFormToWaypoint();
   }
 

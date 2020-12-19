@@ -12,11 +12,13 @@ export const humanizeDate = (date, format) => {
   return dayjs(date).format(format);
 };
 
-export const update = (items, updatedItem) => {
-  const index = items.findIndex((item) => item.id === updatedItem.id);
+export const update = (items, updatedItem, index) => {
+  if (!index) {
+    index = items.findIndex((item) => item.id === updatedItem.id);
 
-  if (index === -1) {
-    return items;
+    if (index === -1) {
+      return items;
+    }
   }
 
   return [

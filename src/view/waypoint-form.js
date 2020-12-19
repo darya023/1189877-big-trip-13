@@ -1,7 +1,10 @@
-import AbstractView from "./abstract.js";
+import Smart from "./smart.js";
 import {TYPES} from "../const.js";
 import {DESTINATIONS, WAYPOINT_FORM_DEFAULT} from "../const.js";
-import {humanizeDate} from "../utils/utils.js";
+import {humanizeDate, update} from "../utils/utils.js";
+import {generateOffers} from "../mock/offers.js";
+import {generateDestinationDescr, generatePhotos} from "../mock/destination.js";
+
 
 const createWaypointDropdown = () => {
   let result = [];
@@ -51,7 +54,6 @@ const createOffers = (offers) => {
 
 const createWaypointOffersTemplate = (offers) => {
 
-  console.log(offers);
   if (offers.some(Boolean)) {
     const createdOffers = createOffers(offers);
 
@@ -124,7 +126,7 @@ const createWaypointFormTemplate = (waypoint) => {
   let endTime = humanizeDate(endDate, `DD/MM/YY HH:mm`);
   const waypointDropdown = createWaypointDropdown();
   const destinationDropdown = createDestinationsDropdown();
-  const offersTemplate = createWaypointOffersTemplate(offers);
+  const offersTemplate = createWaypointOffersTemplate(offers, type.name);
   const destinationsTemplate = createWaypointDestinationTemplate(destination);
 
   if (startDate === ``) {
@@ -192,19 +194,54 @@ const createWaypointFormTemplate = (waypoint) => {
 </li>`;
 };
 
-export default class WaypointForm extends AbstractView {
+export default class WaypointForm extends Smart {
   constructor(waypointForm = WAYPOINT_FORM_DEFAULT) {
     super();
-    this._waypointForm = waypointForm;
+    this._data = waypointForm;
     this._element = null;
+
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formClickHandler = this._formClickHandler.bind(this);
+    this._waypointTypeChangeHandler = this._waypointTypeChangeHandler.bind(this);
+    this._waypointOfferCheckedHandler = this._waypointOfferCheckedHandler.bind(this);
+    this._waypointDestinationChangeHandler = this._waypointDestinationChangeHandler.bind(this);
+    this._waypointPriceChangeHandler = this._waypointPriceChangeHandler.bind(this);
+    this._waypointStartTimeChangeHandler = this._waypointStartTimeChangeHandler.bind(this);
+    this._waypointEndTimeChangeHandler = this._waypointEndTimeChangeHandler.bind(this);
+
     this._rollupButton = this._getChildElement(`.event__rollup-btn`);
     this._waypointDetails = this._getChildElement(`.event__details`);
+
+    this._setInnerHandlers();
+
   }
 
   getTemplate() {
-    return createWaypointFormTemplate(this._waypointForm);
+    return createWaypointFormTemplate(this._data);
+  }
+
+  reset(waypoint) {
+    this.updateData(
+      waypoint
+    );
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+  _setInnerHandlers() {
+    this.getElement().querySelectorAll(`.event__type-input`).forEach((waypointType) => {
+      waypointType.addEventListener(`click`, this._waypointTypeChangeHandler);
+    });
+    this.getElement().querySelectorAll(`.event__offer-checkbox`).forEach((waypointOffer) => {
+      waypointOffer.addEventListener(`click`, this._waypointOfferCheckedHandler);
+    });
+    this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._waypointDestinationChangeHandler);
+    this.getElement().querySelector(`.event__input--price`).addEventListener(`change`, this._waypointPriceChangeHandler);
+    this.getElement().querySelector(`[name="event-start-time"]`).addEventListener(`change`, this._waypointStartTimeChangeHandler);
+    this.getElement().querySelector(`[name="event-end-time"]`).addEventListener(`change`, this._waypointEndTimeChangeHandler);
   }
 
   _getChildElement(selector) {
@@ -213,11 +250,72 @@ export default class WaypointForm extends AbstractView {
 
   _formSubmitHandler(event) {
     event.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(this._data);
   }
 
   _formClickHandler() {
     this._callback.formClick();
+  }
+
+  _waypointTypeChangeHandler(event) {
+    this.updateData({
+      type: {
+        name: event.target.value,
+        img: {
+          url: `img/icons/${event.target.value}.png`,
+          alt: `Event type icon`,
+        },
+      },
+      offers: generateOffers(true),
+    });
+  }
+
+  _waypointDestinationChangeHandler(event) {
+    this.updateData({
+      destination: {
+        name: event.target.value,
+        description: generateDestinationDescr(),
+        photos: generatePhotos(),
+      },
+    });
+  }
+
+  _waypointEndTimeChangeHandler(event) {
+    this.updateData(
+      {endDate: event.target.value}, 
+      true
+    );
+  }
+
+  _waypointStartTimeChangeHandler(event) {
+    this.updateData(
+      {startDate: event.target.value}, 
+      true
+    );
+  }
+
+  _waypointPriceChangeHandler(event) {
+    this.updateData(
+      {price: event.target.value}, 
+      true
+    );
+  }
+
+  _waypointOfferCheckedHandler(event) {
+    const element = event.target.parentElement;
+    const index = [...element.parentElement.children].indexOf(element);
+
+    this.updateData({
+      offers: update(
+          this._data.offers,
+          Object.assign(
+              {},
+              this._data.offers[index],
+              {checked: event.target.checked}
+          ),
+          index
+      )
+    });
   }
 
   setFormSubmitHandler(callback) {
