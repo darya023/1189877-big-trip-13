@@ -222,7 +222,7 @@ export default class WaypointForm extends Smart {
 
   reset(waypoint) {
     this.updateData(
-      waypoint
+        waypoint
     );
   }
 
@@ -282,22 +282,22 @@ export default class WaypointForm extends Smart {
 
   _waypointEndTimeChangeHandler(event) {
     this.updateData(
-      {endDate: event.target.value}, 
-      true
+        {endDate: event.target.value},
+        true
     );
   }
 
   _waypointStartTimeChangeHandler(event) {
     this.updateData(
-      {startDate: event.target.value}, 
-      true
+        {startDate: event.target.value},
+        true
     );
   }
 
   _waypointPriceChangeHandler(event) {
     this.updateData(
-      {price: event.target.value}, 
-      true
+        {price: event.target.value},
+        true
     );
   }
 
