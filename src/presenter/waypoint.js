@@ -1,7 +1,5 @@
 import WaypointView from "../view/waypoint.js";
 import WaypointFormView from "../view/waypoint-form.js";
-import WaypointOffersView from "../view/waypoint-offers.js";
-import WaypointDestinationView from "../view/waypoint-destination.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
 
 const Mode = {
@@ -17,8 +15,6 @@ export default class Waypoint {
 
     this._waypointComponent = null;
     this._waypointFormComponent = null;
-    this._waypointOffersComponent = null;
-    this._waypointDestinationComponent = null;
     this._mode = Mode.DEFAULT;
 
     this._handleWaypointButtonClick = this._handleWaypointButtonClick.bind(this);
@@ -36,18 +32,11 @@ export default class Waypoint {
 
     this._waypointComponent = new WaypointView(this._waypoint);
     this._waypointFormComponent = new WaypointFormView(this._waypoint);
-    this._waypointOffersComponent = new WaypointOffersView(this._waypoint.offers);
-    this._waypointDestinationComponent = new WaypointDestinationView(this._waypoint.destination);
-    this._waypointDetails = this._waypointFormComponent.getWaypointDetails();
-    this._waypointDetails.innerHTML = ``;
 
     this._waypointComponent.setWaypointClickHandler(this._handleWaypointButtonClick);
     this._waypointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._waypointFormComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._waypointFormComponent.setFormClickHandler(this._handleFormButtonClick);
-
-    render(this._waypointDetails, this._waypointOffersComponent, RenderPosition.AFTERBEGIN);
-    render(this._waypointDetails, this._waypointDestinationComponent, RenderPosition.BEFOREEND);
 
     if (prevWaypointComponent === null || prevWaypointFormComponent === null) {
       render(this._tripContainer.getElement(), this._waypointComponent, RenderPosition.BEFOREEND);

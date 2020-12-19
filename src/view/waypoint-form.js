@@ -30,14 +30,102 @@ const createDestinationsDropdown = () => {
   return result.join(``);
 };
 
+const createOffers = (offers) => {
+  let result = [];
+
+  for (const offer of offers) {
+    const elem = `<div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.value}-1" type="checkbox" name="event-offer-${offer.value}"${offer.checked ? ` checked` : ``}>
+        <label class="event__offer-label" for="event-offer-${offer.value}-1">
+          <span class="event__offer-title">${offer.name}</span>
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">${offer.price}</span>
+        </label>
+      </div>`;
+
+    result.push(elem);
+  }
+
+  return result.join(``);
+};
+
+const createWaypointOffersTemplate = (offers) => {
+
+  console.log(offers);
+  if (offers.some(Boolean)) {
+    const createdOffers = createOffers(offers);
+
+    return `<section class="event__section  event__section--offers">
+      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+  
+      <div class="event__available-offers">
+        ${createdOffers}
+      </div>
+    </section>`;
+  }
+
+  return ``;
+};
+
+const createDescription = (description) => {
+  if (description) {
+    return `<p class="event__destination-description">${description}</p>`;
+  }
+
+  return ``;
+};
+
+const createPhotos = (photos) => {
+  if (photos.some(Boolean)) {
+    const photo = createPhoto(photos);
+
+    return `<div class="event__photos-container">
+      <div class="event__photos-tape">
+        ${photo}
+      </div>
+    </div>`;
+  }
+
+  return ``;
+};
+
+const createPhoto = (photos) => {
+  let result = [];
+
+  for (const photo of photos) {
+    const elem = `<img class="event__photo" src="${photo.url}" alt="${photo.alt}">`;
+
+    result.push(elem);
+  }
+
+  return result.join(``);
+};
+
+const createWaypointDestinationTemplate = (destination) => {
+  const {description, photos} = destination;
+  const waypointDescription = createDescription(description);
+  const waypointPhotos = createPhotos(photos);
+
+  if (description || photos.some(Boolean)) {
+    return `<section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      ${waypointDescription}
+      ${waypointPhotos}
+    </section>`;
+  }
+
+  return ``;
+};
 
 const createWaypointFormTemplate = (waypoint) => {
-  const {type, destination, startDate, endDate, price} = waypoint;
+  const {type, destination, startDate, endDate, price, offers} = waypoint;
 
   let startTime = humanizeDate(startDate, `DD/MM/YY HH:mm`);
   let endTime = humanizeDate(endDate, `DD/MM/YY HH:mm`);
   const waypointDropdown = createWaypointDropdown();
   const destinationDropdown = createDestinationsDropdown();
+  const offersTemplate = createWaypointOffersTemplate(offers);
+  const destinationsTemplate = createWaypointDestinationTemplate(destination);
 
   if (startDate === ``) {
     startTime = ``;
@@ -96,7 +184,10 @@ const createWaypointFormTemplate = (waypoint) => {
         <span class="visually-hidden">Open event</span>
       </button>
     </header>
-    <section class="event__details"></section>
+    <section class="event__details">
+      ${offersTemplate}
+      ${destinationsTemplate}
+    </section>
   </form>
 </li>`;
 };
@@ -114,14 +205,6 @@ export default class WaypointForm extends AbstractView {
 
   getTemplate() {
     return createWaypointFormTemplate(this._waypointForm);
-  }
-
-  getRollupButton() {
-    return this._rollupButton;
-  }
-
-  getWaypointDetails() {
-    return this._waypointDetails;
   }
 
   _getChildElement(selector) {
