@@ -8,7 +8,6 @@ export default class SiteMessage extends AbstractView {
   constructor(message) {
     super();
     this._message = message;
-    this._element = null;
   }
 
   getTemplate() {

@@ -4,7 +4,10 @@ import {DESTINATIONS, WAYPOINT_FORM_DEFAULT} from "../const.js";
 import {humanizeDate, update} from "../utils/utils.js";
 import {generateOffers} from "../mock/offers.js";
 import {generateDestinationDescr, generatePhotos} from "../mock/destination.js";
+import flatpickr from "flatpickr";
+import RangePlugin from "flatpickr/dist/plugins/rangePlugin";
 
+import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 const createWaypointDropdown = () => {
   let result = [];
@@ -198,7 +201,9 @@ export default class WaypointForm extends Smart {
   constructor(waypointForm = WAYPOINT_FORM_DEFAULT) {
     super();
     this._data = waypointForm;
-    this._element = null;
+    this._datepicker = null;
+    this._endDatepicker = null;
+
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formClickHandler = this._formClickHandler.bind(this);
@@ -206,14 +211,13 @@ export default class WaypointForm extends Smart {
     this._waypointOfferCheckedHandler = this._waypointOfferCheckedHandler.bind(this);
     this._waypointDestinationChangeHandler = this._waypointDestinationChangeHandler.bind(this);
     this._waypointPriceChangeHandler = this._waypointPriceChangeHandler.bind(this);
-    this._waypointStartTimeChangeHandler = this._waypointStartTimeChangeHandler.bind(this);
-    this._waypointEndTimeChangeHandler = this._waypointEndTimeChangeHandler.bind(this);
+    this._waypointDateChangeHandler = this._waypointDateChangeHandler.bind(this);
 
 
     this._waypointDetails = this._getChildElement(`.event__details`);
 
     this._setInnerHandlers();
-
+    this._setDatepicker();
   }
 
   getTemplate() {
@@ -228,8 +232,40 @@ export default class WaypointForm extends Smart {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFormClickHandler(this._callback.formClick);
+  }
+
+  _setDatepicker() {
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
+
+    const waypointStartDateInput = this._getChildElement(`[name="event-start-time"]`);
+    const waypointEndDateInput = this._getChildElement(`[name="event-end-time"]`);
+
+    this._datepicker = flatpickr(
+        waypointStartDateInput,
+        {
+          "enableTime": true,
+          "time_24hr": true,
+          "dateFormat": `d/m/y H:i`,
+          "plugins": [new RangePlugin({input: waypointEndDateInput})],
+          "onChange": this._waypointDateChangeHandler
+        }
+    );
+  }
+
+  _waypointDateChangeHandler(selectedDates) {
+    this.updateData(
+        {
+          startDate: selectedDates[0],
+          endDate: selectedDates[1],
+        },
+        true
+    );
   }
 
   _setInnerHandlers() {
@@ -237,8 +273,6 @@ export default class WaypointForm extends Smart {
     const waypointOffersInputs = this._getChildElements(`.event__offer-checkbox`);
     const waypointDestinationInput = this._getChildElement(`.event__input--destination`);
     const waypointPriceInput = this._getChildElement(`.event__input--price`);
-    const waypointStartDateInput = this._getChildElement(`[name="event-start-time"]`);
-    const waypointEndDateInput = this._getChildElement(`[name="event-end-time"]`);
 
     waypointTypeInputs.forEach((waypointType) => {
       waypointType.addEventListener(`click`, this._waypointTypeChangeHandler);
@@ -248,8 +282,6 @@ export default class WaypointForm extends Smart {
     });
     waypointDestinationInput.addEventListener(`change`, this._waypointDestinationChangeHandler);
     waypointPriceInput.addEventListener(`change`, this._waypointPriceChangeHandler);
-    waypointStartDateInput.addEventListener(`change`, this._waypointStartTimeChangeHandler);
-    waypointEndDateInput.addEventListener(`change`, this._waypointEndTimeChangeHandler);
   }
 
   _getChildElement(selector) {
@@ -290,20 +322,6 @@ export default class WaypointForm extends Smart {
         photos: generatePhotos(),
       },
     });
-  }
-
-  _waypointEndTimeChangeHandler(event) {
-    this.updateData(
-        {endDate: event.target.value},
-        true
-    );
-  }
-
-  _waypointStartTimeChangeHandler(event) {
-    this.updateData(
-        {startDate: event.target.value},
-        true
-    );
   }
 
   _waypointPriceChangeHandler(event) {

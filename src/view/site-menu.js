@@ -27,7 +27,6 @@ export default class SiteMenu extends AbstractView {
   constructor(menuItems) {
     super();
     this._menuItems = menuItems;
-    this._element = null;
   }
 
   getTemplate() {
