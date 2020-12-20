@@ -209,7 +209,7 @@ export default class WaypointForm extends Smart {
     this._waypointStartTimeChangeHandler = this._waypointStartTimeChangeHandler.bind(this);
     this._waypointEndTimeChangeHandler = this._waypointEndTimeChangeHandler.bind(this);
 
-    this._rollupButton = this._getChildElement(`.event__rollup-btn`);
+
     this._waypointDetails = this._getChildElement(`.event__details`);
 
     this._setInnerHandlers();
@@ -229,23 +229,35 @@ export default class WaypointForm extends Smart {
   restoreHandlers() {
     this._setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setFormClickHandler(this._callback.formClick);
   }
 
   _setInnerHandlers() {
-    this.getElement().querySelectorAll(`.event__type-input`).forEach((waypointType) => {
+    const waypointTypeInputs = this._getChildElements(`.event__type-input`);
+    const waypointOffersInputs = this._getChildElements(`.event__offer-checkbox`);
+    const waypointDestinationInput = this._getChildElement(`.event__input--destination`);
+    const waypointPriceInput = this._getChildElement(`.event__input--price`);
+    const waypointStartDateInput = this._getChildElement(`[name="event-start-time"]`);
+    const waypointEndDateInput = this._getChildElement(`[name="event-end-time"]`);
+
+    waypointTypeInputs.forEach((waypointType) => {
       waypointType.addEventListener(`click`, this._waypointTypeChangeHandler);
     });
-    this.getElement().querySelectorAll(`.event__offer-checkbox`).forEach((waypointOffer) => {
+    waypointOffersInputs.forEach((waypointOffer) => {
       waypointOffer.addEventListener(`click`, this._waypointOfferCheckedHandler);
     });
-    this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._waypointDestinationChangeHandler);
-    this.getElement().querySelector(`.event__input--price`).addEventListener(`change`, this._waypointPriceChangeHandler);
-    this.getElement().querySelector(`[name="event-start-time"]`).addEventListener(`change`, this._waypointStartTimeChangeHandler);
-    this.getElement().querySelector(`[name="event-end-time"]`).addEventListener(`change`, this._waypointEndTimeChangeHandler);
+    waypointDestinationInput.addEventListener(`change`, this._waypointDestinationChangeHandler);
+    waypointPriceInput.addEventListener(`change`, this._waypointPriceChangeHandler);
+    waypointStartDateInput.addEventListener(`change`, this._waypointStartTimeChangeHandler);
+    waypointEndDateInput.addEventListener(`change`, this._waypointEndTimeChangeHandler);
   }
 
   _getChildElement(selector) {
     return this.getElement().querySelector(selector);
+  }
+
+  _getChildElements(selector) {
+    return this.getElement().querySelectorAll(selector);
   }
 
   _formSubmitHandler(event) {
@@ -326,7 +338,9 @@ export default class WaypointForm extends Smart {
   }
 
   setFormClickHandler(callback) {
+    const rollupButton = this._getChildElement(`.event__rollup-btn`);
+
     this._callback.formClick = callback;
-    this._rollupButton.addEventListener(`click`, this._formClickHandler);
+    rollupButton.addEventListener(`click`, this._formClickHandler);
   }
 }

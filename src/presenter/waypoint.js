@@ -106,6 +106,7 @@ export default class Waypoint {
   }
 
   _handleFormButtonClick() {
+    this._waypointFormComponent.reset(this._waypoint);
     this._replaceFormToWaypoint();
   }
 
