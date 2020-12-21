@@ -217,7 +217,7 @@ export default class WaypointForm extends Smart {
     this._waypointDetails = this._getChildElement(`.event__details`);
 
     this._setInnerHandlers();
-    this._setDatepicker();
+    this._initDatepicker();
   }
 
   getTemplate() {
@@ -232,12 +232,12 @@ export default class WaypointForm extends Smart {
 
   restoreHandlers() {
     this._setInnerHandlers();
-    this._setDatepicker();
+    this._initDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFormClickHandler(this._callback.formClick);
   }
 
-  _setDatepicker() {
+  _initDatepicker() {
     if (this._datepicker) {
       this._datepicker.destroy();
       this._datepicker = null;
@@ -252,6 +252,7 @@ export default class WaypointForm extends Smart {
           "enableTime": true,
           "time_24hr": true,
           "dateFormat": `d/m/y H:i`,
+          "minuteIncrement": 1,
           "plugins": [new RangePlugin({input: waypointEndDateInput})],
           "onChange": this._waypointDateChangeHandler
         }
