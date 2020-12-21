@@ -118,7 +118,6 @@ export default class Waypoint extends AbstractView {
   constructor(waypoint) {
     super();
     this._waypoint = waypoint;
-    this._element = null;
     this._waypointClickHandler = this._waypointClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._rollupButton = this._getChildElement(`.event__rollup-btn`);
