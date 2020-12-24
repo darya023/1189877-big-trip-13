@@ -1,10 +1,7 @@
 import dayjs from "dayjs";
-import {TYPES} from "../const.js";
-import {DESTINATIONS} from "../const.js";
+import {TYPES, DESTINATIONS} from "../const.js";
 import {getRandomInteger} from "../utils/utils.js";
-import {generateOffers} from "./offers.js";
-import {generateDestinationDescr, generatePhotos} from "./destination.js";
-import {nanoid} from "nanoid";
+import {generateId} from "../utils/waypoint.js";
 
 const generateTypeName = () => {
   const randomIndex = getRandomInteger(0, TYPES.length - 1);
@@ -42,10 +39,6 @@ const generateDate = (start) => {
   return date;
 };
 
-const generateId = () => {
-  return nanoid();
-};
-
 export const generateWaypoint = () => {
   const typeName = generateTypeName();
   const startDate = generateDate();
@@ -59,11 +52,9 @@ export const generateWaypoint = () => {
         alt: `Event type icon`,
       },
     },
-    offers: generateOffers(),
+    offers: [],
     destination: {
       name: generateDestination(),
-      description: generateDestinationDescr(),
-      photos: generatePhotos(),
     },
     startDate,
     endDate: generateDate(startDate),

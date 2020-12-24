@@ -2,8 +2,6 @@ import Smart from "./smart.js";
 import {TYPES} from "../const.js";
 import {DESTINATIONS, WAYPOINT_FORM_DEFAULT} from "../const.js";
 import {humanizeDate, update} from "../utils/utils.js";
-import {generateOffers} from "../mock/offers.js";
-import {generateDestinationDescr, generatePhotos} from "../mock/destination.js";
 import flatpickr from "flatpickr";
 import RangePlugin from "flatpickr/dist/plugins/rangePlugin";
 
@@ -56,7 +54,6 @@ const createOffers = (offers) => {
 };
 
 const createWaypointOffersTemplate = (offers) => {
-
   if (offers.some(Boolean)) {
     const createdOffers = createOffers(offers);
 
@@ -107,11 +104,12 @@ const createPhoto = (photos) => {
 };
 
 const createWaypointDestinationTemplate = (destination) => {
-  const {description, photos} = destination;
-  const waypointDescription = createDescription(description);
-  const waypointPhotos = createPhotos(photos);
+  const {description, photos = []} = destination;
 
   if (description || photos.some(Boolean)) {
+    const waypointDescription = createDescription(description);
+    const waypointPhotos = createPhotos(photos);
+
     return `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
       ${waypointDescription}
@@ -180,7 +178,7 @@ const createWaypointFormTemplate = (waypoint) => {
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+        <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${price}">
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -198,23 +196,26 @@ const createWaypointFormTemplate = (waypoint) => {
 };
 
 export default class WaypointForm extends Smart {
-  constructor(waypointForm = WAYPOINT_FORM_DEFAULT) {
+  constructor(offersModel, destinationsModel, waypointForm = WAYPOINT_FORM_DEFAULT) {
     super();
     this._data = waypointForm;
     this._datepicker = null;
     this._endDatepicker = null;
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
 
+    if (this._data === WAYPOINT_FORM_DEFAULT) {
+      this._data.offers = offersModel.getOffers(this._data.type.name);
+    }
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formClickHandler = this._formClickHandler.bind(this);
+    this._formDeleteHandler = this._formDeleteHandler.bind(this);
     this._waypointTypeChangeHandler = this._waypointTypeChangeHandler.bind(this);
     this._waypointOfferCheckedHandler = this._waypointOfferCheckedHandler.bind(this);
     this._waypointDestinationChangeHandler = this._waypointDestinationChangeHandler.bind(this);
     this._waypointPriceChangeHandler = this._waypointPriceChangeHandler.bind(this);
     this._waypointDateChangeHandler = this._waypointDateChangeHandler.bind(this);
-
-
-    this._waypointDetails = this._getChildElement(`.event__details`);
 
     this._setInnerHandlers();
     this._initDatepicker();
@@ -228,6 +229,15 @@ export default class WaypointForm extends Smart {
     this.updateData(
         waypoint
     );
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
   }
 
   restoreHandlers() {
@@ -302,27 +312,40 @@ export default class WaypointForm extends Smart {
     this._callback.formClick();
   }
 
+  _formDeleteHandler(event) {
+    event.preventDefault();
+    this._callback.formDelete(this._data);
+  }
+
   _waypointTypeChangeHandler(event) {
-    this.updateData({
-      type: {
-        name: event.target.value,
-        img: {
-          url: `img/icons/${event.target.value}.png`,
-          alt: `Event type icon`,
-        },
-      },
-      offers: generateOffers(true),
-    });
+    this.updateData(
+        {
+          type: {
+            name: event.target.value,
+            img: {
+              url: `img/icons/${event.target.value}.png`,
+              alt: `Event type icon`,
+            },
+          },
+          offers: this._offersModel.getOffers(event.target.value)
+        }
+    );
   }
 
   _waypointDestinationChangeHandler(event) {
-    this.updateData({
-      destination: {
-        name: event.target.value,
-        description: generateDestinationDescr(),
-        photos: generatePhotos(),
-      },
-    });
+    const destination = event.target.value;
+
+    if (this._destinationsModel.getDestination(destination) !== undefined) {
+      this.updateData({
+        destination: this._destinationsModel.getDestination(destination)
+      });
+    } else {
+      this.updateData({
+        destination: {
+          name: destination
+        }
+      });
+    }
   }
 
   _waypointPriceChangeHandler(event) {
@@ -361,5 +384,12 @@ export default class WaypointForm extends Smart {
 
     this._callback.formClick = callback;
     rollupButton.addEventListener(`click`, this._formClickHandler);
+  }
+
+  setFormDeleteHandler(callback) {
+    const deleteButton = this._getChildElement(`.event__reset-btn`);
+
+    this._callback.formDelete = callback;
+    deleteButton.addEventListener(`click`, this._formDeleteHandler);
   }
 }

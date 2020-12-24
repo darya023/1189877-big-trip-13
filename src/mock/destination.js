@@ -1,7 +1,7 @@
 import {getRandomInteger} from "../utils/utils.js";
-import {DESCRIPTION} from "../const.js";
+import {DESCRIPTION, DESTINATIONS} from "../const.js";
 
-export const generateDestinationDescr = () => {
+const generateDestinationDescr = (destination) => {
   const sentences = DESCRIPTION.split(`. `);
   const lastIndex = sentences.length - 1;
   const lastSentence = sentences[lastIndex];
@@ -20,13 +20,13 @@ export const generateDestinationDescr = () => {
   }
 
   if (result.some(Boolean)) {
-    return result.join(`. `).concat(`.`);
+    return destination + result.join(`. `).concat(`.`);
   }
 
   return ``;
 };
 
-export const generatePhotos = () => {
+const generatePhotos = () => {
   const randomLength = getRandomInteger(1, 10);
   let photos = [];
 
@@ -39,4 +39,19 @@ export const generatePhotos = () => {
     photos.push(photo);
   }
   return photos;
+};
+
+export const generateDestinations = () => {
+  let destinations = [];
+
+  for (const destination of DESTINATIONS) {
+    const element = {
+      name: destination,
+      description: generateDestinationDescr(destination),
+      photos: generatePhotos(),
+    };
+    destinations.push(element);
+  }
+
+  return destinations;
 };

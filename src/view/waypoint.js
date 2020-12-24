@@ -2,6 +2,7 @@ import AbstractView from "./abstract.js";
 import {humanizeDate} from "../utils/utils.js";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
+import he from "he";
 
 dayjs.extend(duration);
 
@@ -85,7 +86,7 @@ const createWaypointTemplate = (waypoint) => {
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="${type.img.url}" alt="${type.img.alt}">
     </div>
-    <h3 class="event__title">${type.name} ${destination.name}</h3>
+    <h3 class="event__title">${type.name} ${he.encode(String(destination.name))}</h3>
     <div class="event__schedule">
       <p class="event__time">
         <time class="event__start-time" datetime="${startFullDate}">${startTime}</time>
@@ -136,8 +137,8 @@ export default class Waypoint extends AbstractView {
     this._callback.waypointClick();
   }
 
-  _favoriteClickHandler(evt) {
-    evt.preventDefault();
+  _favoriteClickHandler(event) {
+    event.preventDefault();
     this._callback.favoriteClick();
   }
 

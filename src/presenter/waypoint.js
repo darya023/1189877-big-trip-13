@@ -1,6 +1,7 @@
 import WaypointView from "../view/waypoint.js";
 import WaypointFormView from "../view/waypoint-form.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
+import {UpdateType, UserAction} from "../const.js";
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -20,23 +21,27 @@ export default class Waypoint {
     this._handleWaypointButtonClick = this._handleWaypointButtonClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleFormButtonClick = this._handleFormButtonClick.bind(this);
+    this._handleFormDeleteClick = this._handleFormDeleteClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
-  init(waypoint) {
+  init(waypoint, offersModel, destinationsModel) {
     this._waypoint = waypoint;
+    this._destinationsModel = destinationsModel;
+    this._offersModel = offersModel;
 
     const prevWaypointComponent = this._waypointComponent;
     const prevWaypointFormComponent = this._waypointFormComponent;
 
     this._waypointComponent = new WaypointView(this._waypoint);
-    this._waypointFormComponent = new WaypointFormView(this._waypoint);
+    this._waypointFormComponent = new WaypointFormView(this._offersModel, this._destinationsModel, this._waypoint);
 
     this._waypointComponent.setWaypointClickHandler(this._handleWaypointButtonClick);
     this._waypointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._waypointFormComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._waypointFormComponent.setFormClickHandler(this._handleFormButtonClick);
+    this._waypointFormComponent.setFormDeleteHandler(this._handleFormDeleteClick);
 
     if (prevWaypointComponent === null || prevWaypointFormComponent === null) {
       render(this._tripContainer.getElement(), this._waypointComponent, RenderPosition.BEFOREEND);
@@ -56,7 +61,6 @@ export default class Waypoint {
   }
 
   resetViewMode() {
-
     if (this._mode !== Mode.DEFAULT) {
       this._replaceFormToWaypoint();
     }
@@ -90,6 +94,8 @@ export default class Waypoint {
 
   _handleFavoriteClick() {
     this._changeData(
+        UserAction.UPDATE,
+        UpdateType.MINOR,
         Object.assign(
             {},
             this._waypoint,
@@ -100,9 +106,24 @@ export default class Waypoint {
     );
   }
 
-  _handleFormSubmit(waypoint) {
-    this._changeData(waypoint);
+  _handleFormSubmit(updatedWaypoint) {
+    const isMinorUpdate = !(this._waypoint.startDate === updatedWaypoint.startDate
+                            || this._waypoint.endDate === updatedWaypoint.endDate);
+
+    this._changeData(
+        UserAction.UPDATE,
+        (isMinorUpdate) ? UpdateType.MINOR : UpdateType.PATCH,
+        updatedWaypoint
+    );
     this._replaceFormToWaypoint();
+  }
+
+  _handleFormDeleteClick(waypoint) {
+    this._changeData(
+        UserAction.DELETE,
+        UpdateType.MINOR,
+        waypoint
+    );
   }
 
   _handleFormButtonClick() {

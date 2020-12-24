@@ -1,3 +1,5 @@
+import {nanoid} from "nanoid";
+
 export const isPast = (startDate, endDate) => {
   const now = new Date();
 
@@ -21,13 +23,17 @@ export const getDurationTime = (waypoint) => {
 };
 
 export const sortByDate = (waypoints) => {
-  waypoints.sort((a, b) => a.startDate - b.startDate);
+  return waypoints.sort((a, b) => a.startDate - b.startDate);
 };
 
 export const sortByPrice = (waypoints) => {
-  waypoints.sort((a, b) => b.price - a.price);
+  return waypoints.sort((a, b) => b.price - a.price);
 };
 
 export const sortByTime = (waypoints) => {
-  waypoints.sort((a, b) => getDurationTime(b) - getDurationTime(a));
+  return waypoints.sort((a, b) => getDurationTime(b) - getDurationTime(a));
+};
+
+export const generateId = () => {
+  return nanoid();
 };

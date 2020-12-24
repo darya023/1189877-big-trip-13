@@ -978,3 +978,8 @@ main {
 
 .statistics__item:not(:last-child) {
   margin-bottom: 78px; }
+
+.error {
+  color:#e7244b;
+  padding: 0 20px 20px;
+}

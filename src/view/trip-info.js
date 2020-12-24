@@ -23,7 +23,7 @@ const createDate = (startDate, endDate) => {
 };
 
 const createTotalPrice = (prices, offers) => {
-  const price = prices.reduce((sum, current) => sum + current, 0);
+  const price = prices.reduce((sum, current) => +sum + +current, 0);
   const offersPrice = offers.reduce((sum, current) => {
     let result = current.price;
 
@@ -31,10 +31,10 @@ const createTotalPrice = (prices, offers) => {
       result = 0;
     }
 
-    return sum + result;
+    return +sum + +result;
   }, 0);
 
-  const result = price + offersPrice;
+  const result = +price + +offersPrice;
 
   return result;
 };
@@ -54,6 +54,7 @@ const createTripInfoTemplate = (waypoints) => {
   for (const waypoint of sortByDateWaypoints) {
     names.push(waypoint.destination.name);
     prices.push(waypoint.price);
+
     for (const offer of waypoint.offers) {
       offers.push(offer);
     }
