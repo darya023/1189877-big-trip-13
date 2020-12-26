@@ -68,3 +68,8 @@ export const ErrorMessage = {
   PRICE: `Price must be a decimal number`,
   DESTINATION: `Destination must be selected from the list`,
 };
+
+export const UpdatedItem = {
+  TRIP_INFO: `TRIP_INFO`,
+  ADD_BUTTON: `ADD_BUTTON`,
+};

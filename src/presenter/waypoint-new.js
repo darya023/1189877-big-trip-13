@@ -2,16 +2,17 @@ import WaypointFormView from "../view/waypoint-form.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
 import {UpdateType, UserAction} from "../const.js";
 import {generateId} from "../utils/waypoint.js";
+import Observer from "../utils/observer.js";
 
-export default class WaypointNew {
+export default class WaypointNew extends Observer {
   constructor(tripContainer, changeData) {
+    super();
     this._tripContainer = tripContainer;
     this._changeData = changeData;
 
     this._waypointFormComponent = null;
 
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
-    this._handleFormButtonClick = this._handleFormButtonClick.bind(this);
     this._handleFormDeleteClick = this._handleFormDeleteClick.bind(this);
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
@@ -21,10 +22,9 @@ export default class WaypointNew {
     this._offersModel = offersModel;
 
     if (this._waypointFormComponent === null) {
-      this._waypointFormComponent = new WaypointFormView(this._offersModel, this._destinationsModel);
+      this._waypointFormComponent = new WaypointFormView(this._offersModel, this._destinationsModel, true);
 
       this._waypointFormComponent.setFormSubmitHandler(this._handleFormSubmit);
-      this._waypointFormComponent.setFormClickHandler(this._handleFormButtonClick);
       this._waypointFormComponent.setFormDeleteHandler(this._handleFormDeleteClick);
 
       render(this._tripContainer.getElement(), this._waypointFormComponent, RenderPosition.AFTERBEGIN);
@@ -37,6 +37,7 @@ export default class WaypointNew {
       remove(this._waypointFormComponent);
       this._waypointFormComponent = null;
       document.removeEventListener(`keydown`, this._onEscKeyDown);
+      this._updateAddButton(true);
     }
   }
 
@@ -63,7 +64,7 @@ export default class WaypointNew {
     this.destroy();
   }
 
-  _handleFormButtonClick() {
-    this.destroy();
+  _updateAddButton(update) {
+    this._notify(update);
   }
 }

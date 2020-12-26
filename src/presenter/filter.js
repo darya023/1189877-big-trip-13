@@ -12,9 +12,9 @@ export default class Filter {
     this._filterComponent = null;
 
     this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
-    this._handleModeEvent = this._handleModeEvent.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
 
-    this._filterModel.addObserver(this._handleModeEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -35,7 +35,7 @@ export default class Filter {
     remove(prevFilterComponent);
   }
 
-  _handleModeEvent() {
+  _handleModelEvent() {
     this.init();
   }
 

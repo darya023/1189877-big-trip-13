@@ -3,13 +3,15 @@ import TripView from "../view/trip.js";
 import SiteMessageView from "../view/site-message.js";
 import WaypointPresenter from "./waypoint.js";
 import WaypointNewPresenter from "./waypoint-new.js";
-import {SortingType, UpdateType, UserAction, FilterType} from "../const.js";
+import {SortingType, UpdateType, UserAction, FilterType, UpdatedItem} from "../const.js";
 import {remove, render, RenderPosition} from "../utils/render.js";
 import {filter} from "../utils/filter.js";
 import {sortByDate, sortByPrice, sortByTime} from "../utils/waypoint.js";
+import Observer from "../utils/observer.js";
 
-export default class Trip {
+export default class Trip extends Observer {
   constructor(tripContainer, message, waypointsModel, offersModel, destinationsModel, filterModel) {
+    super();
     this._tripContainer = tripContainer;
     this._message = message;
     this._waypointsModel = waypointsModel;
@@ -18,24 +20,25 @@ export default class Trip {
     this._filterModel = filterModel;
     this._currentSortingType = SortingType.DAY;
     this._waypointPresenter = new Map();
-    this.tripPrice = null;
-    this.filteredWaypoints =
+    this._waypoints = null;
 
     this._siteMessageComponent = new SiteMessageView(this._message);
-
     this._tripComponent = new TripView();
 
     this._handleSortingTypeChange = this._handleSortingTypeChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleWaypointNewEvent = this._handleWaypointNewEvent.bind(this);
+
+    this._waypointNewPresenter = new WaypointNewPresenter(this._tripComponent, this._handleViewAction);
 
     this._waypointsModel.addObserver(this._handleModelEvent);
     this._offersModel.addObserver(this._handleModelEvent);
     this._destinationsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
+    this._waypointNewPresenter.addObserver(this._handleWaypointNewEvent);
 
-    this._waypointNewPresenter = new WaypointNewPresenter(this._tripComponent, this._handleViewAction);
   }
 
   init() {
@@ -140,6 +143,9 @@ export default class Trip {
         this._renderTrip();
         break;
     }
+
+    this._waypoints = this._getWaypoints();
+    this._updateSiteState(UpdatedItem.TRIP_INFO, this._waypoints);
   }
 
   _handleViewAction(actionType, updateType, update) {
@@ -154,6 +160,14 @@ export default class Trip {
         this._waypointsModel.deleteWaypoint(updateType, update);
         break;
     }
+  }
+
+  _handleWaypointNewEvent(update) {
+    this._updateSiteState(UpdatedItem.ADD_BUTTON, update);
+  }
+
+  _updateSiteState(updatedItem, update) {
+    this._notify(updatedItem, update);
   }
 
   _renderSorting() {
@@ -182,14 +196,14 @@ export default class Trip {
   }
 
   _renderTrip() {
-    const waypoints = this._getWaypoints();
+    this._waypoints = this._getWaypoints();
 
-    if (!waypoints.some(Boolean)) {
+    if (!this._waypoints.some(Boolean)) {
       this._renderMessage();
       return;
     }
 
     this._renderSorting();
-    this._renderWaypoints(waypoints);
+    this._renderWaypoints(this._waypoints);
   }
 }

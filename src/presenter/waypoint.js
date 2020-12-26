@@ -18,9 +18,9 @@ export default class Waypoint {
     this._waypointFormComponent = null;
     this._mode = Mode.DEFAULT;
 
-    this._handleWaypointButtonClick = this._handleWaypointButtonClick.bind(this);
+    this._handleWaypointRollupClick = this._handleWaypointRollupClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
-    this._handleFormButtonClick = this._handleFormButtonClick.bind(this);
+    this._handleFormRollupClick = this._handleFormRollupClick.bind(this);
     this._handleFormDeleteClick = this._handleFormDeleteClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
@@ -35,12 +35,12 @@ export default class Waypoint {
     const prevWaypointFormComponent = this._waypointFormComponent;
 
     this._waypointComponent = new WaypointView(this._waypoint);
-    this._waypointFormComponent = new WaypointFormView(this._offersModel, this._destinationsModel, this._waypoint);
+    this._waypointFormComponent = new WaypointFormView(this._offersModel, this._destinationsModel, false, this._waypoint);
 
-    this._waypointComponent.setWaypointClickHandler(this._handleWaypointButtonClick);
+    this._waypointComponent.setWaypointRollupClickHandler(this._handleWaypointRollupClick);
     this._waypointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._waypointFormComponent.setFormSubmitHandler(this._handleFormSubmit);
-    this._waypointFormComponent.setFormClickHandler(this._handleFormButtonClick);
+    this._waypointFormComponent.setFormRollupClickHandler(this._handleFormRollupClick);
     this._waypointFormComponent.setFormDeleteHandler(this._handleFormDeleteClick);
 
     if (prevWaypointComponent === null || prevWaypointFormComponent === null) {
@@ -126,12 +126,12 @@ export default class Waypoint {
     );
   }
 
-  _handleFormButtonClick() {
+  _handleFormRollupClick() {
     this._waypointFormComponent.reset(this._waypoint);
     this._replaceFormToWaypoint();
   }
 
-  _handleWaypointButtonClick() {
+  _handleWaypointRollupClick() {
     this._replaceWaypointToForm();
   }
 }

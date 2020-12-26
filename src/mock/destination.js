@@ -11,7 +11,7 @@ const generateDestinationDescr = (destination) => {
   }
 
   const randomLenght = getRandomInteger(0, 5);
-  let result = [];
+  const result = [];
 
   for (let i = 0; i < randomLenght; i++) {
     const randomIndex = getRandomInteger(0, lastIndex);
@@ -28,7 +28,7 @@ const generateDestinationDescr = (destination) => {
 
 const generatePhotos = () => {
   const randomLength = getRandomInteger(1, 10);
-  let photos = [];
+  const photos = [];
 
   for (let i = 0; i < randomLength; i++) {
     const photo = {
@@ -42,7 +42,7 @@ const generatePhotos = () => {
 };
 
 export const generateDestinations = () => {
-  let destinations = [];
+  const destinations = [];
 
   for (const destination of DESTINATIONS) {
     const element = {

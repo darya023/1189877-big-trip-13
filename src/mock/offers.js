@@ -25,7 +25,7 @@ export const generateOffers = () => {
     }
   ];
 
-  let result = [];
+  const result = [];
 
   for (const type of TYPES) {
     for (const offer of allOffers) {

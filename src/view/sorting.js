@@ -2,7 +2,7 @@ import AbstractView from "./abstract.js";
 import {SortingType} from "../const.js";
 
 const createSorting = (sortingItems, currentSortingType) => {
-  let result = [];
+  const result = [];
 
   for (let i = 0; i < sortingItems.length; i++) {
     const elem = `<div class="trip-sort__item  trip-sort__item--${sortingItems[i].type}">

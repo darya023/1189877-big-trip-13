@@ -1,7 +1,7 @@
 import AbstractView from "./abstract.js";
 
-const createFilterItems = (filters, currentFulterType) => {
-  let result = [];
+const createFilterItems = (filters, currentFilterType) => {
+  const result = [];
 
   for (let i = 0; i < filters.length; i++) {
     const elem = `<div class="trip-filters__filter">
@@ -12,7 +12,7 @@ const createFilterItems = (filters, currentFulterType) => {
         type="radio"
         name="trip-filter"
         value="${filters[i].type}"
-        ${filters[i].type === currentFulterType ? ` checked` : ``}
+        ${filters[i].type === currentFilterType ? ` checked` : ``}
         ${filters[i].disable ? ` disabled` : ``}
       >
       <label class="trip-filters__filter-label" for="filter-${filters[i].type}">
@@ -26,8 +26,8 @@ const createFilterItems = (filters, currentFulterType) => {
   return result.join(``);
 };
 
-const createFilterTemplate = (filters, currentFulterType) => {
-  const createdFilterItems = createFilterItems(filters, currentFulterType);
+const createFilterTemplate = (filters, currentFilterType) => {
+  const createdFilterItems = createFilterItems(filters, currentFilterType);
 
   return `<h2 class="visually-hidden">Filter events</h2>
   <form class="trip-filters" action="#" method="get">
@@ -37,15 +37,15 @@ const createFilterTemplate = (filters, currentFulterType) => {
 };
 
 export default class Filter extends AbstractView {
-  constructor(filters, currentFulterType) {
+  constructor(filters, currentFilterType) {
     super();
     this._filters = filters;
-    this._currentFulterType = currentFulterType;
+    this._currentFilterType = currentFilterType;
     this._filterTypeClickHandler = this._filterTypeClickHandler.bind(this);
   }
 
   getTemplate() {
-    return createFilterTemplate(this._filters, this._currentFulterType);
+    return createFilterTemplate(this._filters, this._currentFilterType);
   }
 
   _getChildElements(selector) {

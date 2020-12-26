@@ -47,9 +47,9 @@ const createTripInfoTemplate = (waypoints) => {
   const startDate = sortByDateWaypoints[0].startDate;
   const endDate = sortByDateWaypoints[sortByDateWaypoints.length - 1].endDate;
 
-  let names = [];
-  let prices = [];
-  let offers = [];
+  const names = [];
+  const prices = [];
+  const offers = [];
 
   for (const waypoint of sortByDateWaypoints) {
     names.push(waypoint.destination.name);
