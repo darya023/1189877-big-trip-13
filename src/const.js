@@ -39,9 +39,32 @@ export const WAYPOINT_FORM_DEFAULT = {
 };
 
 export const SortingType = {
-  DAY: `DAY`,
-  EVENT: `EVENT`,
-  TIME: `TIME`,
-  PRICE: `PRICE`,
-  OFFER: `OFFER`
+  DAY: `day`,
+  EVENT: `event`,
+  TIME: `time`,
+  PRICE: `price`,
+  OFFER: `offer`
+};
+
+export const UserAction = {
+  UPDATE: `UPDATE`,
+  ADD: `ADD`,
+  DELETE: `DELETE`
+};
+
+export const UpdateType = {
+  PATCH: `PATCH`, // обновить часть списка (ТМ)
+  MINOR: `MINOR`, // обновить весь список ТМ
+  MAJOR: `MAJOR`, // щбновить список и сбросить сортировку
+};
+
+export const FilterType = {
+  EVERYTHING: `everything`,
+  FUTURE: `future`,
+  PAST: `past`
+};
+
+export const ErrorMessage = {
+  PRICE: `Price must be a decimal number`,
+  DESTINATION: `Destination must be selected from the list`,
 };

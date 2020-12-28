@@ -2,6 +2,7 @@ import AbstractView from "./abstract.js";
 import {humanizeDate} from "../utils/utils.js";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
+import he from "he";
 
 dayjs.extend(duration);
 
@@ -46,7 +47,7 @@ const getDurationTime = (time) => {
 };
 
 const createOffers = (offers) => {
-  let offersMarkup = [];
+  const offersMarkup = [];
 
   for (const offer of offers) {
     if (offer.checked) {
@@ -85,7 +86,7 @@ const createWaypointTemplate = (waypoint) => {
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="${type.img.url}" alt="${type.img.alt}">
     </div>
-    <h3 class="event__title">${type.name} ${destination.name}</h3>
+    <h3 class="event__title">${type.name} ${he.encode(String(destination.name))}</h3>
     <div class="event__schedule">
       <p class="event__time">
         <time class="event__start-time" datetime="${startFullDate}">${startTime}</time>
@@ -118,7 +119,7 @@ export default class Waypoint extends AbstractView {
   constructor(waypoint) {
     super();
     this._waypoint = waypoint;
-    this._waypointClickHandler = this._waypointClickHandler.bind(this);
+    this._waypointRollupClickHandler = this._waypointRollupClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._rollupButton = this._getChildElement(`.event__rollup-btn`);
     this._favoriteButton = this._getChildElement(`.event__favorite-btn`);
@@ -132,18 +133,18 @@ export default class Waypoint extends AbstractView {
     return this.getElement().querySelector(selector);
   }
 
-  _waypointClickHandler() {
+  _waypointRollupClickHandler() {
     this._callback.waypointClick();
   }
 
-  _favoriteClickHandler(evt) {
-    evt.preventDefault();
+  _favoriteClickHandler(event) {
+    event.preventDefault();
     this._callback.favoriteClick();
   }
 
-  setWaypointClickHandler(callback) {
+  setWaypointRollupClickHandler(callback) {
     this._callback.waypointClick = callback;
-    this._rollupButton.addEventListener(`click`, this._waypointClickHandler);
+    this._rollupButton.addEventListener(`click`, this._waypointRollupClickHandler);
   }
 
   setFavoriteClickHandler(callback) {
