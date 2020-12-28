@@ -2,13 +2,12 @@ import WaypointFormView from "../view/waypoint-form.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
 import {UpdateType, UserAction} from "../const.js";
 import {generateId} from "../utils/waypoint.js";
-import Observer from "../utils/observer.js";
 
-export default class WaypointNew extends Observer {
-  constructor(tripContainer, changeData) {
-    super();
+export default class WaypointNew {
+  constructor(tripContainer, changeData, updateAddButton) {
     this._tripContainer = tripContainer;
     this._changeData = changeData;
+    this._updateAddButton = updateAddButton;
 
     this._waypointFormComponent = null;
 
@@ -62,9 +61,5 @@ export default class WaypointNew extends Observer {
 
   _handleFormDeleteClick() {
     this.destroy();
-  }
-
-  _updateAddButton(update) {
-    this._notify(update);
   }
 }

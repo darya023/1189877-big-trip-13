@@ -4,8 +4,7 @@ import TripPresenter from "./trip.js";
 import TripInfoPresenter from "./trip-info.js";
 import FilterPresenter from "./filter.js";
 import {render, RenderPosition} from "../utils/render.js";
-import {UpdatedItem} from "../const.js";
-
+import {filter} from "../utils/filter.js";
 
 export default class Site {
   constructor(siteContainer, tripMainElement, siteControlsElement, tripEventsElement, message, menuItems, waypointsModel, offersModel, destinationsModel, filterModel) {
@@ -23,18 +22,23 @@ export default class Site {
 
     this._siteMenuComponent = new SiteMenuView(this._menuItems);
 
+    this._handleModelEvent = this._handleModelEvent.bind(this);
+    this._updateAddButton = this._updateAddButton.bind(this);
+    this._getWaypoints = this._getWaypoints.bind(this);
+
     this._tripInfoPresenter = new TripInfoPresenter(this._tripMainElement);
-    this._tripPresenter = new TripPresenter(this._tripEventsElement, this._message, this._waypointsModel, this._offersModel, this._destinationsModel, this._filterModel);
+    this._tripPresenter = new TripPresenter(this._tripEventsElement, this._message, this._waypointsModel, this._offersModel, this._destinationsModel, this._filterModel, this._updateAddButton, this._getWaypoints);
     this._filterPresenter = new FilterPresenter(this._siteControlsElement, this._filterModel, this._waypointsModel);
     this._addButtonPresenter = new AddButtonPresenter(this._tripPresenter, this._tripMainElement);
 
-    this._handleTripEvent = this._handleTripEvent.bind(this);
-
-    this._tripPresenter.addObserver(this._handleTripEvent);
+    this._waypointsModel.addObserver(this._handleModelEvent);
+    this._offersModel.addObserver(this._handleModelEvent);
+    this._destinationsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
-    this._waypoints = this._waypointsModel.getWaypoints();
+    this._waypoints = this._getWaypoints();
 
     if (this._waypoints.some(Boolean)) {
       this._tripInfoPresenter.init(this._waypoints);
@@ -47,16 +51,21 @@ export default class Site {
     render(this._siteControlsElement, this._siteMenuComponent, RenderPosition.AFTERBEGIN);
   }
 
-  _handleTripEvent(updatedItem, update) {
-    switch (updatedItem) {
-      case UpdatedItem.TRIP_INFO:
-        this._tripInfoPresenter.destroy();
-        this._tripInfoPresenter.init(update);
-        break;
-      case UpdatedItem.ADD_BUTTON:
-        this._addButtonPresenter.destroy();
-        this._addButtonPresenter.init(update);
-        break;
-    }
+  _updateAddButton(isNotDisabled) {
+    this._addButtonPresenter.destroy();
+    this._addButtonPresenter.init(isNotDisabled);
+  }
+
+  _handleModelEvent() {
+    this._waypoints = this._getWaypoints();
+    this._tripInfoPresenter.destroy();
+    this._tripInfoPresenter.init(this._waypoints);
+  }
+
+  _getWaypoints() {
+    const filterType = this._filterModel.getFilter();
+    const waypoints = this._waypointsModel.getWaypoints();
+
+    return filter[filterType](waypoints);
   }
 }
