@@ -3,7 +3,6 @@ import {TYPES} from "../const.js";
 import {DESTINATIONS, WAYPOINT_FORM_DEFAULT} from "../const.js";
 import {humanizeDate, update} from "../utils/utils.js";
 import flatpickr from "flatpickr";
-import RangePlugin from "flatpickr/dist/plugins/rangePlugin";
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
@@ -209,7 +208,7 @@ export default class WaypointForm extends Smart {
   constructor(offersModel, destinationsModel, isCreateForm, waypointForm = WAYPOINT_FORM_DEFAULT) {
     super();
     this._data = waypointForm;
-    this._datepicker = null;
+    this._startDatepicker = null;
     this._endDatepicker = null;
     this._offersModel = offersModel;
     this._destinationsModel = destinationsModel;
@@ -225,14 +224,15 @@ export default class WaypointForm extends Smart {
     this._waypointOfferCheckedHandler = this._waypointOfferCheckedHandler.bind(this);
     this._waypointDestinationChangeHandler = this._waypointDestinationChangeHandler.bind(this);
     this._waypointPriceChangeHandler = this._waypointPriceChangeHandler.bind(this);
-    this._waypointDateChangeHandler = this._waypointDateChangeHandler.bind(this);
+    this._waypointStartDateChangeHandler = this._waypointStartDateChangeHandler.bind(this);
+    this._waypointEndDateChangeHandler = this._waypointEndDateChangeHandler.bind(this);
 
     if (!this._isCreateForm) {
       this._formRollupClickHandler = this._formRollupClickHandler.bind(this);
     }
 
     this._setInnerHandlers();
-    this._initDatepicker();
+    this._initDatepickers();
   }
 
   getTemplate() {
@@ -248,15 +248,13 @@ export default class WaypointForm extends Smart {
   removeElement() {
     super.removeElement();
 
-    if (this._datepicker) {
-      this._datepicker.destroy();
-      this._datepicker = null;
-    }
+    this._destroyDatepicker(`_startDatepicker`);
+    this._destroyDatepicker(`_endDatepicker`);
   }
 
   restoreHandlers() {
     this._setInnerHandlers();
-    this._initDatepicker();
+    this._initDatepickers();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFormDeleteHandler(this._callback.formDelete);
 
@@ -265,33 +263,58 @@ export default class WaypointForm extends Smart {
     }
   }
 
-  _initDatepicker() {
-    if (this._datepicker) {
-      this._datepicker.destroy();
-      this._datepicker = null;
-    }
+  _initDatepickers() {
+    this._destroyDatepicker(`_startDatepicker`);
+    this._destroyDatepicker(`_endDatepicker`);
 
     const waypointStartDateInput = this._getChildElement(`[name="event-start-time"]`);
     const waypointEndDateInput = this._getChildElement(`[name="event-end-time"]`);
 
-    this._datepicker = flatpickr(
-        waypointStartDateInput,
-        {
-          "enableTime": true,
-          "time_24hr": true,
-          "dateFormat": `d/m/y H:i`,
-          "minuteIncrement": 1,
-          "plugins": [new RangePlugin({input: waypointEndDateInput})],
-          "onChange": this._waypointDateChangeHandler,
-        }
+    this._startDatepicker = flatpickr(
+      waypointStartDateInput,
+      {
+        "enableTime": true,
+        "time_24hr": true,
+        "dateFormat": `d/m/y H:i`,
+        "minuteIncrement": 1,
+        "onChange": this._waypointStartDateChangeHandler,
+      }
+    );
+
+    this._endDatepicker = flatpickr(
+      waypointEndDateInput,
+      {
+        "enableTime": true,
+        "time_24hr": true,
+        "dateFormat": `d/m/y H:i`,
+        "minuteIncrement": 1,
+        minDate:waypointStartDateInput.value,
+        "onChange": this._waypointEndDateChangeHandler,
+      }
     );
   }
 
-  _waypointDateChangeHandler(selectedDates) {
+  _destroyDatepicker(datepicker) {
+    if (this[datepicker]) {
+      this[datepicker].destroy();
+      this[datepicker] = null;
+    }
+  }
+
+  _waypointStartDateChangeHandler([selectedDate]) {
+    this.updateData(
+      {
+        startDate: selectedDate,
+      },
+      true
+    );
+      this._endDatepicker.set("minDate", humanizeDate(selectedDate, `DD/MM/YY hh:mm`));
+    }
+      
+  _waypointEndDateChangeHandler([selectedDate]) {
     this.updateData(
         {
-          startDate: selectedDates[0],
-          endDate: selectedDates[1],
+          endDate: selectedDate,
         },
         true
     );
