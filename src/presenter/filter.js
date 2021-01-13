@@ -53,7 +53,7 @@ export default class Filter {
       {
         type: FilterType.EVERYTHING,
         name: `everything`,
-        disable: !filter[FilterType.EVERYTHING](waypoints).some(Boolean),
+        disable: false,
       },
       {
         type: FilterType.FUTURE,

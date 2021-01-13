@@ -8,19 +8,21 @@ import {remove, render, RenderPosition} from "../utils/render.js";
 import {sortByDate, sortByPrice, sortByTime} from "../utils/waypoint.js";
 
 export default class Trip {
-  constructor(tripContainer, message, waypointsModel, offersModel, destinationsModel, filterModel, updateAddButton, getFilteredWaypoints) {
+  constructor(tripContainer, loadingMessage, emptyTripMessage, waypointsModel, offersModel, destinationsModel, filterModel, updateAddButton, getFilteredWaypoints, api) {
     this._tripContainer = tripContainer;
-    this._message = message;
+    this._loadingMessage = loadingMessage;
+    this._emptyTripMessage = emptyTripMessage;
     this._waypointsModel = waypointsModel;
     this._offersModel = offersModel;
     this._destinationsModel = destinationsModel;
     this._filterModel = filterModel;
     this._updateAddButton = updateAddButton;
     this._getFilteredWaypoints = getFilteredWaypoints;
+    this._api = api;
 
     this._currentSortingType = SortingType.DAY;
+    this._isLoading = true;
 
-    this._siteMessageComponent = new SiteMessageView(this._message);
     this._tripComponent = new TripView();
 
     this._handleSortingTypeChange = this._handleSortingTypeChange.bind(this);
@@ -135,13 +137,31 @@ export default class Trip {
         this.destroy(true);
         this._renderTrip();
         break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._siteMessageComponent);
+        this._renderTrip();
+        break;
     }
   }
 
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE:
-        this._waypointsModel.updateWaypoint(updateType, update);
+        this._api.updateWaypoint(update).then((waypoint) => {
+          waypoint.offers = this._offersModel.getOffers(waypoint.type.name, true).map((waypointOffer) => {
+            const offer = waypoint.offers.filter((currentOffers) => currentOffers.value === waypointOffer.value)[0];
+
+            return Object.assign(
+                {},
+                waypointOffer,
+                {
+                  checked: offer ? offer.checked : false
+                }
+            );
+          });
+          this._waypointsModel.updateWaypoint(updateType, waypoint);
+        });
         break;
       case UserAction.ADD:
         this._waypointsModel.addWaypoint(updateType, update);
@@ -173,16 +193,28 @@ export default class Trip {
     waypoints.forEach((waypoint) => this._renderWaypoint(waypoint));
   }
 
-  _renderMessage() {
-    render(this._tripContainer, this._siteMessageComponent, RenderPosition.BEFOREEND);
+  _renderMessage(emptyTrip) {
+    if (this._isLoading) {
+      this._siteMessageComponent = new SiteMessageView(this._loadingMessage);
+      render(this._tripContainer, this._siteMessageComponent, RenderPosition.BEFOREEND);
+    }
+    if (emptyTrip) {
+      this._siteMessageComponent = new SiteMessageView(this._emptyTripMessage);
+      render(this._tripContainer, this._siteMessageComponent, RenderPosition.BEFOREEND);
+    }
   }
 
   _renderTrip() {
+    if (this._isLoading) {
+      this._renderMessage();
+      return;
+    }
+
     const filteredWaypoints = this._getFilteredWaypoints();
     const waypoints = this._getSortedWaypoints(filteredWaypoints);
 
     if (!waypoints.some(Boolean)) {
-      this._renderMessage();
+      this._renderMessage(true);
       return;
     }
 

@@ -1,6 +1,6 @@
 import Smart from "./smart.js";
 import {TYPES} from "../const.js";
-import {DESTINATIONS, WAYPOINT_FORM_DEFAULT} from "../const.js";
+import {WAYPOINT_FORM_DEFAULT} from "../const.js";
 import {humanizeDate, update} from "../utils/utils.js";
 import flatpickr from "flatpickr";
 
@@ -21,10 +21,10 @@ const createWaypointDropdown = () => {
   return result.join(``);
 };
 
-const createDestinationsDropdown = () => {
+const createDestinationsDropdown = (destinations) => {
   const result = [];
 
-  for (const destination of DESTINATIONS) {
+  for (const destination of destinations) {
     const elem = `<option value="${destination}"></option>`;
 
     result.push(elem);
@@ -119,13 +119,13 @@ const createWaypointDestinationTemplate = (destination) => {
   return ``;
 };
 
-const createWaypointFormTemplate = (waypoint, isCreateForm) => {
+const createWaypointFormTemplate = (waypoint, isCreateForm, destinations) => {
   const {type, destination, startDate, endDate, price, offers} = waypoint;
 
   let startTime = humanizeDate(startDate, `DD/MM/YY HH:mm`);
   let endTime = humanizeDate(endDate, `DD/MM/YY HH:mm`);
   const waypointDropdown = createWaypointDropdown();
-  const destinationDropdown = createDestinationsDropdown();
+  const destinationDropdown = createDestinationsDropdown(destinations);
   const offersTemplate = createWaypointOffersTemplate(offers, type.name);
   const destinationsTemplate = createWaypointDestinationTemplate(destination);
 
@@ -236,7 +236,7 @@ export default class WaypointForm extends Smart {
   }
 
   getTemplate() {
-    return createWaypointFormTemplate(this._data, this._isCreateForm);
+    return createWaypointFormTemplate(this._data, this._isCreateForm, this._destinationsModel.getDestinations());
   }
 
   reset(waypoint) {
@@ -271,26 +271,26 @@ export default class WaypointForm extends Smart {
     const waypointEndDateInput = this._getChildElement(`[name="event-end-time"]`);
 
     this._startDatepicker = flatpickr(
-      waypointStartDateInput,
-      {
-        "enableTime": true,
-        "time_24hr": true,
-        "dateFormat": `d/m/y H:i`,
-        "minuteIncrement": 1,
-        "onChange": this._waypointStartDateChangeHandler,
-      }
+        waypointStartDateInput,
+        {
+          "enableTime": true,
+          "time_24hr": true,
+          "dateFormat": `d/m/y H:i`,
+          "minuteIncrement": 1,
+          "onChange": this._waypointStartDateChangeHandler,
+        }
     );
 
     this._endDatepicker = flatpickr(
-      waypointEndDateInput,
-      {
-        "enableTime": true,
-        "time_24hr": true,
-        "dateFormat": `d/m/y H:i`,
-        "minuteIncrement": 1,
-        minDate:waypointStartDateInput.value,
-        "onChange": this._waypointEndDateChangeHandler,
-      }
+        waypointEndDateInput,
+        {
+          "enableTime": true,
+          "time_24hr": true,
+          "dateFormat": `d/m/y H:i`,
+          "minuteIncrement": 1,
+          "minDate": waypointStartDateInput.value,
+          "onChange": this._waypointEndDateChangeHandler,
+        }
     );
   }
 
@@ -303,14 +303,14 @@ export default class WaypointForm extends Smart {
 
   _waypointStartDateChangeHandler([selectedDate]) {
     this.updateData(
-      {
-        startDate: selectedDate,
-      },
-      true
+        {
+          startDate: selectedDate,
+        },
+        true
     );
-      this._endDatepicker.set("minDate", humanizeDate(selectedDate, `DD/MM/YY hh:mm`));
-    }
-      
+    this._endDatepicker.set(`minDate`, humanizeDate(selectedDate, `DD/MM/YY hh:mm`));
+  }
+
   _waypointEndDateChangeHandler([selectedDate]) {
     this.updateData(
         {
@@ -391,7 +391,7 @@ export default class WaypointForm extends Smart {
 
   _waypointPriceChangeHandler(event) {
     this.updateData(
-        {price: event.target.value},
+        {price: Number(event.target.value)},
         true
     );
   }
