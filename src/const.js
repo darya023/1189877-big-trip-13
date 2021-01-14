@@ -57,6 +57,7 @@ export const UpdateType = {
   MINOR: `MINOR`, // обновить весь список ТМ
   MAJOR: `MAJOR`, // щбновить список и сбросить сортировку
   INIT: `INIT`, // инициализация приложения
+  ERROR: `ERROR`, // инициализация приложения
 };
 
 export const FilterType = {

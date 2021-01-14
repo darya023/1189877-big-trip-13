@@ -8,13 +8,14 @@ import {filter} from "../utils/filter.js";
 import {UpdateType} from "../const.js";
 
 export default class Site {
-  constructor(siteContainer, tripMainElement, siteControlsElement, tripEventsElement, loadingMessage, emptyTripMessage, menuItems, waypointsModel, offersModel, destinationsModel, filterModel, api) {
+  constructor(siteContainer, tripMainElement, siteControlsElement, tripEventsElement, loadingMessage, emptyTripMessage, errorMessage, menuItems, waypointsModel, offersModel, destinationsModel, filterModel, api) {
     this._siteContainer = siteContainer;
     this._tripMainElement = tripMainElement;
     this._siteControlsElement = siteControlsElement;
     this._tripEventsElement = tripEventsElement;
     this._loadingMessage = loadingMessage;
     this._emptyTripMessage = emptyTripMessage;
+    this._errorMessage = errorMessage;
     this._menuItems = menuItems;
     this._waypointsModel = waypointsModel;
     this._offersModel = offersModel;
@@ -22,6 +23,7 @@ export default class Site {
     this._filterModel = filterModel;
     this._api = api;
     this._waypoints = null;
+    this._hasInitUpdateType = false;
 
     this._siteMenuComponent = new SiteMenuView(this._menuItems);
 
@@ -30,7 +32,7 @@ export default class Site {
     this._getWaypoints = this._getWaypoints.bind(this);
 
     this._tripInfoPresenter = new TripInfoPresenter(this._tripMainElement);
-    this._tripPresenter = new TripPresenter(this._tripEventsElement, this._loadingMessage, this._emptyTripMessage, this._waypointsModel, this._offersModel, this._destinationsModel, this._filterModel, this._updateAddButton, this._getWaypoints, this._api);
+    this._tripPresenter = new TripPresenter(this._tripEventsElement, this._loadingMessage, this._emptyTripMessage, this._errorMessage, this._waypointsModel, this._offersModel, this._destinationsModel, this._filterModel, this._updateAddButton, this._getWaypoints, this._api);
     this._filterPresenter = new FilterPresenter(this._siteControlsElement, this._filterModel, this._waypointsModel);
     this._addButtonPresenter = new AddButtonPresenter(this._tripPresenter, this._tripMainElement);
 
@@ -64,11 +66,23 @@ export default class Site {
     this._filterPresenter.init();
 
     if (updateType === UpdateType.INIT) {
+      this._hasInitUpdateType = true;
+      this._updateAddButton();
+
       if (this._waypoints.some(Boolean)) {
         this._tripInfoPresenter.init(this._waypoints);
       }
 
+      return;
+    }
+
+    if (updateType === UpdateType.ERROR) {
       this._updateAddButton();
+
+      if (this._hasInitUpdateType) {
+        this._tripInfoPresenter.destroy();
+      }
+
       return;
     }
 

@@ -8,10 +8,11 @@ import {remove, render, RenderPosition} from "../utils/render.js";
 import {sortByDate, sortByPrice, sortByTime} from "../utils/waypoint.js";
 
 export default class Trip {
-  constructor(tripContainer, loadingMessage, emptyTripMessage, waypointsModel, offersModel, destinationsModel, filterModel, updateAddButton, getFilteredWaypoints, api) {
+  constructor(tripContainer, loadingMessage, emptyTripMessage, errorMessage, waypointsModel, offersModel, destinationsModel, filterModel, updateAddButton, getFilteredWaypoints, api) {
     this._tripContainer = tripContainer;
     this._loadingMessage = loadingMessage;
     this._emptyTripMessage = emptyTripMessage;
+    this._errorMessage = errorMessage;
     this._waypointsModel = waypointsModel;
     this._offersModel = offersModel;
     this._destinationsModel = destinationsModel;
@@ -22,6 +23,7 @@ export default class Trip {
 
     this._currentSortingType = SortingType.DAY;
     this._isLoading = true;
+    this._isError = false;
 
     this._tripComponent = new TripView();
 
@@ -142,6 +144,16 @@ export default class Trip {
         remove(this._siteMessageComponent);
         this._renderTrip();
         break;
+      case UpdateType.ERROR:
+        if (!this._isLoading) {
+          this.destroy(true);
+        }
+
+        this._isLoading = false;
+        this._isError = true;
+        remove(this._siteMessageComponent);
+        this._renderTrip();
+        break;
     }
   }
 
@@ -197,6 +209,11 @@ export default class Trip {
     if (this._isLoading) {
       this._siteMessageComponent = new SiteMessageView(this._loadingMessage);
       render(this._tripContainer, this._siteMessageComponent, RenderPosition.BEFOREEND);
+    }
+    if (this._isError) {
+      this._siteMessageComponent = new SiteMessageView(this._errorMessage);
+      render(this._tripContainer, this._siteMessageComponent, RenderPosition.BEFOREEND);
+      return;
     }
     if (emptyTrip) {
       this._siteMessageComponent = new SiteMessageView(this._emptyTripMessage);

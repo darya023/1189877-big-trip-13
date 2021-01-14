@@ -12,6 +12,7 @@ const END_POINT = `https://13.ecmascript.pages.academy/big-trip`;
 const menuItems = generateSiteMenuItems();
 const emptyTripMessage = `Click New Event to create your first point`;
 const loadingMessage = `Loading...`;
+const errorMessage = `Error. Try again`;
 const siteBodyElement = document.querySelector(`.page-body`);
 const tripMainElement = siteBodyElement.querySelector(`.trip-main`);
 const siteControlsElement = tripMainElement.querySelector(`.trip-controls`);
@@ -58,9 +59,9 @@ api.getWaypoints()
   .then(()=>api.getDestinations())
   .then(setDestinations)
   .catch(() => {
-    waypointsModel.setWaypoints(UpdateType.MAJOR, []);
+    waypointsModel.setWaypoints(UpdateType.ERROR, []);
   });
 
-const sitePresenter = new SitePresenter(siteBodyElement, tripMainElement, siteControlsElement, tripEventsElement, loadingMessage, emptyTripMessage, menuItems, waypointsModel, offersModel, destinationsModel, filterModel, api);
+const sitePresenter = new SitePresenter(siteBodyElement, tripMainElement, siteControlsElement, tripEventsElement, loadingMessage, emptyTripMessage, errorMessage, menuItems, waypointsModel, offersModel, destinationsModel, filterModel, api);
 
 sitePresenter.init();
