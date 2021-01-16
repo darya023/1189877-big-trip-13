@@ -1,9 +1,8 @@
 import Smart from "./smart.js";
 import {TYPES} from "../const.js";
-import {DESTINATIONS, WAYPOINT_FORM_DEFAULT} from "../const.js";
+import {WAYPOINT_FORM_DEFAULT} from "../const.js";
 import {humanizeDate, update} from "../utils/utils.js";
 import flatpickr from "flatpickr";
-import RangePlugin from "flatpickr/dist/plugins/rangePlugin";
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
@@ -22,10 +21,10 @@ const createWaypointDropdown = () => {
   return result.join(``);
 };
 
-const createDestinationsDropdown = () => {
+const createDestinationsDropdown = (destinations) => {
   const result = [];
 
-  for (const destination of DESTINATIONS) {
+  for (const destination of destinations) {
     const elem = `<option value="${destination}"></option>`;
 
     result.push(elem);
@@ -95,7 +94,7 @@ const createPhoto = (photos) => {
   let result = [];
 
   for (const photo of photos) {
-    const elem = `<img class="event__photo" src="${photo.url}" alt="${photo.alt}">`;
+    const elem = `<img class="event__photo" src="${photo.url}" alt="${photo.alt}" loading="lazy">`;
 
     result.push(elem);
   }
@@ -120,13 +119,13 @@ const createWaypointDestinationTemplate = (destination) => {
   return ``;
 };
 
-const createWaypointFormTemplate = (waypoint, isCreateForm) => {
+const createWaypointFormTemplate = (waypoint, isCreateForm, destinations) => {
   const {type, destination, startDate, endDate, price, offers} = waypoint;
 
   let startTime = humanizeDate(startDate, `DD/MM/YY HH:mm`);
   let endTime = humanizeDate(endDate, `DD/MM/YY HH:mm`);
   const waypointDropdown = createWaypointDropdown();
-  const destinationDropdown = createDestinationsDropdown();
+  const destinationDropdown = createDestinationsDropdown(destinations);
   const offersTemplate = createWaypointOffersTemplate(offers, type.name);
   const destinationsTemplate = createWaypointDestinationTemplate(destination);
 
@@ -209,7 +208,7 @@ export default class WaypointForm extends Smart {
   constructor(offersModel, destinationsModel, isCreateForm, waypointForm = WAYPOINT_FORM_DEFAULT) {
     super();
     this._data = waypointForm;
-    this._datepicker = null;
+    this._startDatepicker = null;
     this._endDatepicker = null;
     this._offersModel = offersModel;
     this._destinationsModel = destinationsModel;
@@ -225,18 +224,19 @@ export default class WaypointForm extends Smart {
     this._waypointOfferCheckedHandler = this._waypointOfferCheckedHandler.bind(this);
     this._waypointDestinationChangeHandler = this._waypointDestinationChangeHandler.bind(this);
     this._waypointPriceChangeHandler = this._waypointPriceChangeHandler.bind(this);
-    this._waypointDateChangeHandler = this._waypointDateChangeHandler.bind(this);
+    this._waypointStartDateChangeHandler = this._waypointStartDateChangeHandler.bind(this);
+    this._waypointEndDateChangeHandler = this._waypointEndDateChangeHandler.bind(this);
 
     if (!this._isCreateForm) {
       this._formRollupClickHandler = this._formRollupClickHandler.bind(this);
     }
 
     this._setInnerHandlers();
-    this._initDatepicker();
+    this._initDatepickers();
   }
 
   getTemplate() {
-    return createWaypointFormTemplate(this._data, this._isCreateForm);
+    return createWaypointFormTemplate(this._data, this._isCreateForm, this._destinationsModel.getDestinations());
   }
 
   reset(waypoint) {
@@ -248,15 +248,13 @@ export default class WaypointForm extends Smart {
   removeElement() {
     super.removeElement();
 
-    if (this._datepicker) {
-      this._datepicker.destroy();
-      this._datepicker = null;
-    }
+    this._destroyDatepicker(`_startDatepicker`);
+    this._destroyDatepicker(`_endDatepicker`);
   }
 
   restoreHandlers() {
     this._setInnerHandlers();
-    this._initDatepicker();
+    this._initDatepickers();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFormDeleteHandler(this._callback.formDelete);
 
@@ -265,33 +263,58 @@ export default class WaypointForm extends Smart {
     }
   }
 
-  _initDatepicker() {
-    if (this._datepicker) {
-      this._datepicker.destroy();
-      this._datepicker = null;
-    }
+  _initDatepickers() {
+    this._destroyDatepicker(`_startDatepicker`);
+    this._destroyDatepicker(`_endDatepicker`);
 
     const waypointStartDateInput = this._getChildElement(`[name="event-start-time"]`);
     const waypointEndDateInput = this._getChildElement(`[name="event-end-time"]`);
 
-    this._datepicker = flatpickr(
+    this._startDatepicker = flatpickr(
         waypointStartDateInput,
         {
           "enableTime": true,
           "time_24hr": true,
           "dateFormat": `d/m/y H:i`,
           "minuteIncrement": 1,
-          "plugins": [new RangePlugin({input: waypointEndDateInput})],
-          "onChange": this._waypointDateChangeHandler,
+          "onChange": this._waypointStartDateChangeHandler,
+        }
+    );
+
+    this._endDatepicker = flatpickr(
+        waypointEndDateInput,
+        {
+          "enableTime": true,
+          "time_24hr": true,
+          "dateFormat": `d/m/y H:i`,
+          "minuteIncrement": 1,
+          "minDate": waypointStartDateInput.value,
+          "onChange": this._waypointEndDateChangeHandler,
         }
     );
   }
 
-  _waypointDateChangeHandler(selectedDates) {
+  _destroyDatepicker(datepicker) {
+    if (this[datepicker]) {
+      this[datepicker].destroy();
+      this[datepicker] = null;
+    }
+  }
+
+  _waypointStartDateChangeHandler([selectedDate]) {
     this.updateData(
         {
-          startDate: selectedDates[0],
-          endDate: selectedDates[1],
+          startDate: selectedDate,
+        },
+        true
+    );
+    this._endDatepicker.set(`minDate`, humanizeDate(selectedDate, `DD/MM/YY hh:mm`));
+  }
+
+  _waypointEndDateChangeHandler([selectedDate]) {
+    this.updateData(
+        {
+          endDate: selectedDate,
         },
         true
     );
@@ -368,7 +391,7 @@ export default class WaypointForm extends Smart {
 
   _waypointPriceChangeHandler(event) {
     this.updateData(
-        {price: event.target.value},
+        {price: Number(event.target.value)},
         true
     );
   }
