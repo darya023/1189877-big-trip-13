@@ -94,7 +94,7 @@ const createPhoto = (photos) => {
   let result = [];
 
   for (const photo of photos) {
-    const elem = `<img class="event__photo" src="${photo.url}" alt="${photo.alt}">`;
+    const elem = `<img class="event__photo" src="${photo.url}" alt="${photo.alt}" loading="lazy">`;
 
     result.push(elem);
   }

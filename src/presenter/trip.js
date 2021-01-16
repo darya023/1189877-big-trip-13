@@ -145,10 +145,6 @@ export default class Trip {
         this._renderTrip();
         break;
       case UpdateType.ERROR:
-        if (!this._isLoading) {
-          this.destroy(true);
-        }
-
         this._isLoading = false;
         this._isError = true;
         remove(this._siteMessageComponent);

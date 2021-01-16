@@ -23,7 +23,6 @@ export default class Site {
     this._filterModel = filterModel;
     this._api = api;
     this._waypoints = null;
-    this._hasInitUpdateType = false;
 
     this._siteMenuComponent = new SiteMenuView(this._menuItems);
 
@@ -45,10 +44,6 @@ export default class Site {
   init() {
     this._waypoints = this._getWaypoints();
 
-    // if (this._waypoints.some(Boolean)) {
-    //   this._tripInfoPresenter.init(this._waypoints);
-    // }
-
     this._filterPresenter.init();
     this._tripPresenter.init();
     this._addButtonPresenter.init();
@@ -66,8 +61,7 @@ export default class Site {
     this._filterPresenter.init();
 
     if (updateType === UpdateType.INIT) {
-      this._hasInitUpdateType = true;
-      this._updateAddButton();
+      this._updateAddButton(true);
 
       if (this._waypoints.some(Boolean)) {
         this._tripInfoPresenter.init(this._waypoints);
@@ -78,10 +72,6 @@ export default class Site {
 
     if (updateType === UpdateType.ERROR) {
       this._updateAddButton();
-
-      if (this._hasInitUpdateType) {
-        this._tripInfoPresenter.destroy();
-      }
 
       return;
     }

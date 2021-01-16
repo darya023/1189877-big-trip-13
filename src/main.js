@@ -23,41 +23,46 @@ const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
 const filterModel = new FilterModel();
 
-const setWaypoints = (remoteWaypoints) => {
-  waypoints = remoteWaypoints;
-  waypointsModel.setWaypoints(UpdateType.INIT, remoteWaypoints);
-};
-
-const setOffers = (offers) => {
+const setOffers = (waypoints, offers) => {
   offersModel.setOffers(offers);
 
   for (const waypoint of waypoints) {
-    waypoint.offers = offersModel.getOffers(waypoint.type.name, true).map((waypointOffer) => {
-      const offer = waypoint.offers.filter((currentOffers) => currentOffers.value === waypointOffer.value)[0];
+    if (waypoint.offers.some(Boolean)) {
+      waypoint.offers = offersModel.getOffers(waypoint.type.name, true).map((waypointOffer) => {
+        const offer = waypoint.offers.filter((currentOffers) => currentOffers.value === waypointOffer.value)[0];
 
-      return Object.assign(
-          {},
-          waypointOffer,
-          {
-            checked: offer ? offer.checked : false
-          }
-      );
-    });
+        return Object.assign(
+            {},
+            waypointOffer,
+            {
+              checked: offer ? offer.checked : false
+            }
+        );
+      });
+    }
   }
-  waypointsModel.setWaypoints(UpdateType.MAJOR, waypoints);
+
+  return waypoints;
 };
 
 const setDestinations = (destinations) => {
-  destinationsModel.setDestinations(UpdateType.MAJOR, destinations);
+  destinationsModel.setDestinations(destinations);
 };
 
-let waypoints = [];
-api.getWaypoints()
-  .then(setWaypoints)
-  .then(()=>api.getOffers())
-  .then(setOffers)
-  .then(()=>api.getDestinations())
-  .then(setDestinations)
+const setWaypoints = (waypoints) => {
+  waypointsModel.setWaypoints(UpdateType.INIT, waypoints);
+};
+
+Promise.all([
+  api.getWaypoints(),
+  api.getOffers(),
+  api.getDestinations(),
+])
+  .then(([waypoints, offers, destinations])=>{
+    waypoints = setOffers(waypoints, offers);
+    setDestinations(destinations);
+    setWaypoints(waypoints);
+  })
   .catch(() => {
     waypointsModel.setWaypoints(UpdateType.ERROR, []);
   });
