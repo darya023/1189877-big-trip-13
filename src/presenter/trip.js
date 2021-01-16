@@ -1,7 +1,7 @@
 import SortingView from "../view/sorting.js";
 import TripView from "../view/trip.js";
 import SiteMessageView from "../view/site-message.js";
-import WaypointPresenter from "./waypoint.js";
+import WaypointPresenter, {State as WaypointPresenterViewState} from "./waypoint.js";
 import WaypointNewPresenter from "./waypoint-new.js";
 import {SortingType, UpdateType, UserAction, FilterType} from "../const.js";
 import {remove, render, RenderPosition} from "../utils/render.js";
@@ -156,26 +156,45 @@ export default class Trip {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE:
-        this._api.updateWaypoint(update).then((waypoint) => {
-          waypoint.offers = this._offersModel.getOffers(waypoint.type.name, true).map((waypointOffer) => {
-            const offer = waypoint.offers.filter((currentOffers) => currentOffers.value === waypointOffer.value)[0];
+        this._waypointPresenter.get(update.id).setViewState(WaypointPresenterViewState.SAVING);
+        this._api.updateWaypoint(update)
+          .then((waypoint) => {
+            waypoint.offers = this._offersModel.getOffers(waypoint.type.name, true).map((waypointOffer) => {
+              const offer = waypoint.offers.filter((currentOffers) => currentOffers.value === waypointOffer.value)[0];
 
-            return Object.assign(
-                {},
-                waypointOffer,
-                {
-                  checked: offer ? offer.checked : false
-                }
-            );
+              return Object.assign(
+                  {},
+                  waypointOffer,
+                  {
+                    checked: offer ? offer.checked : false
+                  }
+              );
+            });
+            this._waypointsModel.updateWaypoint(updateType, waypoint);
+          })
+          .catch(() => {
+            this._waypointPresenter.get(update.id).setViewState(WaypointPresenterViewState.ABORTING);
           });
-          this._waypointsModel.updateWaypoint(updateType, waypoint);
-        });
         break;
       case UserAction.ADD:
-        this._waypointsModel.addWaypoint(updateType, update);
+        this._waypointNewPresenter.setSaving();
+        this._api.addWaypoint(update)
+          .then((response) => {
+            this._waypointsModel.addWaypoint(updateType, response);
+          })
+          .catch(() => {
+            this._waypointNewPresenter.setAborting();
+          });
         break;
       case UserAction.DELETE:
-        this._waypointsModel.deleteWaypoint(updateType, update);
+        this._waypointPresenter.get(update.id).setViewState(WaypointPresenterViewState.DELETING);
+        this._api.deleteWaypoint(update)
+          .then(() => {
+            this._waypointsModel.deleteWaypoint(updateType, update);
+          })
+          .catch(() => {
+            this._waypointPresenter.get(update.id).setViewState(WaypointPresenterViewState.ABORTING);
+          });
         break;
     }
   }

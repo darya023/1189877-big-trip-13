@@ -4,7 +4,9 @@ import DestinationsModel from "./model/destinations.js";
 
 const Method = {
   GET: `GET`,
-  PUT: `PUT`
+  PUT: `PUT`,
+  POST: `POST`,
+  DELETE: `DELETE`
 };
 
 const SuccessHTTPStatusRange = {
@@ -45,6 +47,24 @@ export default class Api {
     })
         .then(Api.toJSON)
         .then(WaypointsModel.adaptToClient);
+  }
+
+  addWaypoint(waypoint) {
+    return this._load({
+      url: `points`,
+      method: Method.POST,
+      body: JSON.stringify(WaypointsModel.adaptToServer(waypoint)),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(Api.toJSON)
+      .then(WaypointsModel.adaptToClient);
+  }
+
+  deleteWaypoint(waypoint) {
+    return this._load({
+      url: `points/${waypoint.id}`,
+      method: Method.DELETE
+    });
   }
 
   _load({

@@ -136,10 +136,10 @@ export default class Waypoints extends Observer {
         waypoint,
         {
           "base_price": waypoint.price,
-          "date_from": waypoint.startDate.toISOString(),
-          "date_to": waypoint.endDate.toISOString(),
+          "date_from": waypoint.startDate ? waypoint.startDate.toISOString() : ``,
+          "date_to": waypoint.endDate ? waypoint.endDate.toISOString() : ``,
           "is_favorite": waypoint.isFavorite,
-          "type": waypoint.type.name,
+          "type": waypoint.type.name.toLowerCase(),
           "destination": adaptedDestination,
           "offers": waypoint.offers.map((offer) => {
             return Object.assign(

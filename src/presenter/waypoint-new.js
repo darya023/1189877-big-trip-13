@@ -1,7 +1,6 @@
 import WaypointFormView from "../view/waypoint-form.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
 import {UpdateType, UserAction} from "../const.js";
-import {generateId} from "../utils/waypoint.js";
 
 export default class WaypointNew {
   constructor(tripContainer, changeData, updateAddButton) {
@@ -40,6 +39,25 @@ export default class WaypointNew {
     }
   }
 
+  setSaving() {
+    this._waypointFormComponent.updateData({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._waypointFormComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    this._waypointFormComponent.shake(resetFormState);
+  }
+
   _onEscKeyDown(event) {
     if (event.key === `Esc` || event.key === `Escape`) {
       event.preventDefault();
@@ -48,15 +66,12 @@ export default class WaypointNew {
   }
 
   _handleFormSubmit(waypoint) {
+    waypoint.isFavorite = false;
     this._changeData(
         UserAction.ADD,
         UpdateType.MINOR,
-        Object.assign(
-            {id: generateId()},
-            waypoint
-        )
+        waypoint
     );
-    this.destroy();
   }
 
   _handleFormDeleteClick() {
