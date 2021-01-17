@@ -100,7 +100,6 @@ export default class Waypoint {
         });
         break;
       case State.ABORTING:
-        this._waypointComponent.shake(resetFormState);
         this._waypointFormComponent.shake(resetFormState);
         break;
     }

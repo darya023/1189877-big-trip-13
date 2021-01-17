@@ -127,14 +127,14 @@ const createWaypointDestinationTemplate = (destination) => {
   return ``;
 };
 
-const setButtonResetText = (isDeleting, isCreateForm) => {
+const getButtonResetText = (isDeleting, isCreateForm) => {
   if (isDeleting) {
     return `Deleting...`;
   } else if (isCreateForm) {
-    return `Cansel`;
-  } else {
-    return `Delete`;
+    return `Cancel`;
   }
+
+  return `Delete`;
 };
 
 const createWaypointFormTemplate = (waypoint, isCreateForm, destinations) => {
@@ -156,7 +156,7 @@ const createWaypointFormTemplate = (waypoint, isCreateForm, destinations) => {
   const destinationDropdown = createDestinationsDropdown(destinations);
   const offersTemplate = createWaypointOffersTemplate(offers, isDisabled);
   const destinationsTemplate = createWaypointDestinationTemplate(destination);
-  const buttonResetText = setButtonResetText(isDeleting, isCreateForm);
+  const buttonResetText = getButtonResetText(isDeleting, isCreateForm);
 
   if (startDate === ``) {
     startTime = ``;
@@ -360,18 +360,16 @@ export default class WaypointForm extends Smart {
     this.updateData(
         {
           startDate: selectedDate,
-        },
-        true
+        }
     );
-    this._endDatepicker.set(`minDate`, humanizeDate(selectedDate, `DD/MM/YY hh:mm`));
+    this._endDatepicker.set(`minDate`, humanizeDate(selectedDate, `DD/MM/YY HH:mm`));
   }
 
   _waypointEndDateChangeHandler([selectedDate]) {
     this.updateData(
         {
           endDate: selectedDate,
-        },
-        true
+        }
     );
   }
 
