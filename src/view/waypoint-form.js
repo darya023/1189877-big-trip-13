@@ -357,19 +357,28 @@ export default class WaypointForm extends Smart {
   }
 
   _waypointStartDateChangeHandler([selectedDate]) {
+    const prevEndDate = this._endDatepicker.parseDate(this._endDatepicker.input.value);
+
     this.updateData(
         {
           startDate: selectedDate,
-        }
+        },
+        true
     );
     this._endDatepicker.set(`minDate`, humanizeDate(selectedDate, `DD/MM/YY HH:mm`));
+
+    if (selectedDate > prevEndDate) {
+      this._endDatepicker.setDate(humanizeDate(selectedDate, `DD/MM/YY HH:mm`));
+      this._waypointEndDateChangeHandler([selectedDate]);
+    }
   }
 
   _waypointEndDateChangeHandler([selectedDate]) {
     this.updateData(
         {
           endDate: selectedDate,
-        }
+        },
+        true
     );
   }
 

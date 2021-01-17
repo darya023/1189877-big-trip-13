@@ -43,7 +43,7 @@ export default class Api {
       url: `points/${waypoint.id}`,
       method: Method.PUT,
       body: JSON.stringify(WaypointsModel.adaptToServer(waypoint)),
-      headers: new Headers({"Content-Type": ``})
+      headers: new Headers({"Content-Type": `application/json`})
     })
         .then(Api.toJSON)
         .then(WaypointsModel.adaptToClient);
