@@ -33,12 +33,20 @@ const createDestinationsDropdown = (destinations) => {
   return result.join(``);
 };
 
-const createOffers = (offers) => {
+const createOffers = (offers, isDisabled) => {
   const result = [];
 
   for (const offer of offers) {
     const elem = `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.value}-1" type="checkbox" name="event-offer-${offer.value}"${offer.checked ? ` checked` : ``}>
+        <input 
+          class="event__offer-checkbox  
+          visually-hidden" 
+          id="event-offer-${offer.value}-1" 
+          type="checkbox" 
+          name="event-offer-${offer.value}"
+          ${offer.checked ? ` checked` : ``}
+          ${isDisabled ? ` disabled` : ``}
+        >
         <label class="event__offer-label" for="event-offer-${offer.value}-1">
           <span class="event__offer-title">${offer.name}</span>
           &plus;&euro;&nbsp;
@@ -52,9 +60,9 @@ const createOffers = (offers) => {
   return result.join(``);
 };
 
-const createWaypointOffersTemplate = (offers) => {
+const createWaypointOffersTemplate = (offers, isDisabled) => {
   if (offers.some(Boolean)) {
-    const createdOffers = createOffers(offers);
+    const createdOffers = createOffers(offers, isDisabled);
 
     return `<section class="event__section  event__section--offers">
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
@@ -119,15 +127,36 @@ const createWaypointDestinationTemplate = (destination) => {
   return ``;
 };
 
+const getButtonResetText = (isDeleting, isCreateForm) => {
+  if (isDeleting) {
+    return `Deleting...`;
+  } else if (isCreateForm) {
+    return `Cancel`;
+  }
+
+  return `Delete`;
+};
+
 const createWaypointFormTemplate = (waypoint, isCreateForm, destinations) => {
-  const {type, destination, startDate, endDate, price, offers} = waypoint;
+  const {
+    type,
+    destination,
+    startDate,
+    endDate,
+    price,
+    offers,
+    isDisabled,
+    isSaving,
+    isDeleting
+  } = waypoint;
 
   let startTime = humanizeDate(startDate, `DD/MM/YY HH:mm`);
   let endTime = humanizeDate(endDate, `DD/MM/YY HH:mm`);
   const waypointDropdown = createWaypointDropdown();
   const destinationDropdown = createDestinationsDropdown(destinations);
-  const offersTemplate = createWaypointOffersTemplate(offers, type.name);
+  const offersTemplate = createWaypointOffersTemplate(offers, isDisabled);
   const destinationsTemplate = createWaypointDestinationTemplate(destination);
+  const buttonResetText = getButtonResetText(isDeleting, isCreateForm);
 
   if (startDate === ``) {
     startTime = ``;
@@ -144,7 +173,7 @@ const createWaypointFormTemplate = (waypoint, isCreateForm, destinations) => {
           <span class="visually-hidden">Choose event type</span>
           <img class="event__type-icon" width="17" height="17" src="${type.img.url}" alt="${type.img.alt}">
         </label>
-        <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+        <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? ` disabled` : ``}>
 
         <div class="event__type-list">
           <fieldset class="event__type-group">
@@ -158,7 +187,15 @@ const createWaypointFormTemplate = (waypoint, isCreateForm, destinations) => {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${type.name}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+        <input 
+          class="event__input  event__input--destination" 
+          id="event-destination-1" 
+          type="text" 
+          name="event-destination" 
+          value="${destination.name}" 
+          list="destination-list-1"
+          ${isDisabled ? ` disabled` : ``}
+        >
         <datalist id="destination-list-1">
           ${destinationDropdown}
         </datalist>
@@ -166,10 +203,24 @@ const createWaypointFormTemplate = (waypoint, isCreateForm, destinations) => {
 
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-1">From</label>
-        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startTime}">
+        <input
+          class="event__input event__input--time"
+          id="event-start-time-1"
+          type="text"
+          name="event-start-time"
+          value="${startTime}"
+          ${isDisabled ? ` disabled` : ``}
+        >
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endTime}">
+        <input
+          class="event__input event__input--time"
+          id="event-end-time-1"
+          type="text"
+          name="event-end-time"
+          value="${endTime}"
+          ${isDisabled ? ` disabled` : ``}
+        >
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -178,18 +229,22 @@ const createWaypointFormTemplate = (waypoint, isCreateForm, destinations) => {
           &euro;
         </label>
         <input 
-          class="event__input 
-          event__input--price"
+          class="event__input event__input--price"
           id="event-price-1"
           type="number"
           name="event-price"
           min="0"
           value="${price}"
+          ${isDisabled ? ` disabled` : ``}
         >
       </div>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">${isCreateForm ? `Cansel` : `Delete`}</button>
+      <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? ` disabled` : ``} >
+        ${isSaving ? `Saving...` : `Save`}
+      </button>
+      <button class="event__reset-btn" type="reset" ${isDisabled ? ` disabled` : ``}>
+        ${buttonResetText}
+      </button>
       ${isCreateForm ? `` : `
       <button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
@@ -302,13 +357,20 @@ export default class WaypointForm extends Smart {
   }
 
   _waypointStartDateChangeHandler([selectedDate]) {
+    const prevEndDate = this._endDatepicker.parseDate(this._endDatepicker.input.value);
+
     this.updateData(
         {
           startDate: selectedDate,
         },
         true
     );
-    this._endDatepicker.set(`minDate`, humanizeDate(selectedDate, `DD/MM/YY hh:mm`));
+    this._endDatepicker.set(`minDate`, humanizeDate(selectedDate, `DD/MM/YY HH:mm`));
+
+    if (selectedDate > prevEndDate) {
+      this._endDatepicker.setDate(humanizeDate(selectedDate, `DD/MM/YY HH:mm`));
+      this._waypointEndDateChangeHandler([selectedDate]);
+    }
   }
 
   _waypointEndDateChangeHandler([selectedDate]) {

@@ -53,11 +53,12 @@ const setWaypoints = (waypoints) => {
   waypointsModel.setWaypoints(UpdateType.INIT, waypoints);
 };
 
-Promise.all([
-  api.getWaypoints(),
-  api.getOffers(),
-  api.getDestinations(),
-])
+Promise
+  .all([
+    api.getWaypoints(),
+    api.getOffers(),
+    api.getDestinations(),
+  ])
   .then(([waypoints, offers, destinations])=>{
     waypoints = setOffers(waypoints, offers);
     setDestinations(destinations);

@@ -8,6 +8,11 @@ const Mode = {
   EDITING: `EDITING`
 };
 
+export const State = {
+  SAVING: `SAVING`,
+  DELETING: `DELETING`
+};
+
 export default class Waypoint {
   constructor(tripContainer, changeData, changeMode) {
     this._tripContainer = tripContainer;
@@ -53,7 +58,8 @@ export default class Waypoint {
     }
 
     if (this._mode === Mode.EDITING) {
-      replace(this._waypointFormComponent, prevWaypointFormComponent);
+      replace(this._waypointComponent, prevWaypointFormComponent);
+      this._mode = Mode.DEFAULT;
     }
 
     remove(prevWaypointComponent);
@@ -69,6 +75,34 @@ export default class Waypoint {
   destroy() {
     remove(this._waypointComponent);
     remove(this._waypointFormComponent);
+  }
+
+  setViewState(state) {
+    const resetFormState = () => {
+      this._waypointFormComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._waypointFormComponent.updateData({
+          isDisabled: true,
+          isSaving: true
+        });
+        break;
+      case State.DELETING:
+        this._waypointFormComponent.updateData({
+          isDisabled: true,
+          isDeleting: true
+        });
+        break;
+      case State.ABORTING:
+        this._waypointFormComponent.shake(resetFormState);
+        break;
+    }
   }
 
   _replaceFormToWaypoint() {
@@ -115,7 +149,6 @@ export default class Waypoint {
         (isMinorUpdate) ? UpdateType.MINOR : UpdateType.PATCH,
         updatedWaypoint
     );
-    this._replaceFormToWaypoint();
   }
 
   _handleFormDeleteClick(waypoint) {
