@@ -180,7 +180,7 @@ const renderTimeChart = (timeCtx, waypoints) => {
       },
       title: {
         display: true,
-        text: `TIME`,
+        text: `TIME-SPEND`,
         fontColor: `#000000`,
         fontSize: 23,
         position: `left`
