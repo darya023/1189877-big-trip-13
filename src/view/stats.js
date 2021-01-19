@@ -4,6 +4,8 @@ import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {countWaypointsPriceByTypes, countWaypointsByTypes, makeItemsUniq, countWaypointsTimeByTypes} from "../utils/stats.js";
 
+const BAR_HEIGHT = 55;
+
 const getUniqueTypes = (waypoints) => {
   const types = waypoints.map((waypoint) => waypoint.type.name.toUpperCase());
 
@@ -13,6 +15,8 @@ const getUniqueTypes = (waypoints) => {
 const renderMoneyChart = (moneyCtx, waypoints) => {
   const uniqueTypes = getUniqueTypes(waypoints);
   const waypointsPriceByTypes = uniqueTypes.map((type) => countWaypointsPriceByTypes(waypoints, type));
+
+  moneyCtx.height = BAR_HEIGHT * uniqueTypes.length;
 
   return new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
@@ -84,6 +88,8 @@ const renderTypeChart = (typeCtx, waypoints) => {
   const uniqueTypes = getUniqueTypes(waypoints);
   const waypointsByTypes = uniqueTypes.map((type) => countWaypointsByTypes(waypoints, type));
 
+  typeCtx.height = BAR_HEIGHT * uniqueTypes.length;
+
   return new Chart(typeCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
@@ -153,6 +159,8 @@ const renderTypeChart = (typeCtx, waypoints) => {
 const renderTimeChart = (timeCtx, waypoints) => {
   const uniqueTypes = getUniqueTypes(waypoints);
   const waypointsTimeByTypes = uniqueTypes.map((type) => countWaypointsTimeByTypes(waypoints, type));
+
+  timeCtx.height = BAR_HEIGHT * uniqueTypes.length;
 
   return new Chart(timeCtx, {
     plugins: [ChartDataLabels],
