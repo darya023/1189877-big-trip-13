@@ -1,4 +1,4 @@
-import {generateSiteMenuItems} from "./mock/site-menu-items.js";
+import {generateSiteMenuItems} from "./utils/site-menu-items.js";
 import SitePresenter from "./presenter/site.js";
 import WaypointsModel from "./model/waypoints.js";
 import OffersModel from "./model/offers.js";
@@ -17,6 +17,7 @@ const siteBodyElement = document.querySelector(`.page-body`);
 const tripMainElement = siteBodyElement.querySelector(`.trip-main`);
 const siteControlsElement = tripMainElement.querySelector(`.trip-controls`);
 const tripEventsElement = siteBodyElement.querySelector(`.trip-events`);
+const tripContainerElement = tripEventsElement.parentElement;
 const api = new Api(END_POINT, AUTHORIZATION);
 const waypointsModel = new WaypointsModel();
 const offersModel = new OffersModel();
@@ -68,6 +69,6 @@ Promise
     waypointsModel.setWaypoints(UpdateType.ERROR, []);
   });
 
-const sitePresenter = new SitePresenter(siteBodyElement, tripMainElement, siteControlsElement, tripEventsElement, loadingMessage, emptyTripMessage, errorMessage, menuItems, waypointsModel, offersModel, destinationsModel, filterModel, api);
+const sitePresenter = new SitePresenter(siteBodyElement, tripMainElement, siteControlsElement, tripEventsElement, tripContainerElement, loadingMessage, emptyTripMessage, errorMessage, menuItems, waypointsModel, offersModel, destinationsModel, filterModel, api);
 
 sitePresenter.init();

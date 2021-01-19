@@ -70,3 +70,8 @@ export const ErrorMessage = {
   PRICE: `Price must be a decimal number`,
   DESTINATION: `Destination must be selected from the list`,
 };
+
+export const MenuItem = {
+  TABLE: `TABLE`,
+  STATS: `STATS`
+};
