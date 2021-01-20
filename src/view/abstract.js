@@ -34,4 +34,12 @@ export default class Abstract {
       callback();
     }, SHAKE_ANIMATION_TIMEOUT);
   }
+
+  show() {
+    throw new Error(`Abstract method not implemented: show`);
+  }
+
+  hide() {
+    throw new Error(`Abstract method not implemented: hide`);
+  }
 }

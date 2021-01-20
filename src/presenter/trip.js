@@ -8,7 +8,7 @@ import {remove, render, RenderPosition} from "../utils/render.js";
 import {sortByDate, sortByPrice, sortByTime} from "../utils/waypoint.js";
 
 export default class Trip {
-  constructor(tripContainer, loadingMessage, emptyTripMessage, errorMessage, waypointsModel, offersModel, destinationsModel, filterModel, updateAddButton, getFilteredWaypoints, api) {
+  constructor(tripContainer, loadingMessage, emptyTripMessage, errorMessage, waypointsModel, offersModel, destinationsModel, filterModel, updateAddButton, getFilteredWaypoints, api, siteMenuComponent) {
     this._tripContainer = tripContainer;
     this._loadingMessage = loadingMessage;
     this._emptyTripMessage = emptyTripMessage;
@@ -20,12 +20,14 @@ export default class Trip {
     this._updateAddButton = updateAddButton;
     this._getFilteredWaypoints = getFilteredWaypoints;
     this._api = api;
+    this._siteMenuComponent = siteMenuComponent;
 
     this._currentSortingType = SortingType.DAY;
     this._isLoading = true;
     this._isError = false;
 
     this._tripComponent = new TripView();
+    this._statsComponent = null;
 
     this._handleSortingTypeChange = this._handleSortingTypeChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
@@ -63,6 +65,18 @@ export default class Trip {
     if (resetSortingType) {
       this._currentSortingType = SortingType.DAY;
     }
+  }
+
+  show() {
+    this._tripContainer.classList.remove(`trip-events--hidden`);
+    this.destroy(true);
+    this._renderTrip();
+    this.hidden = false;
+  }
+
+  hide() {
+    this._tripContainer.classList.add(`trip-events--hidden`);
+    this.hidden = true;
   }
 
   _getSortingItems() {
