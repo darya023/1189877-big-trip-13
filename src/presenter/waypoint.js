@@ -1,6 +1,7 @@
 import WaypointView from "../view/waypoint.js";
 import WaypointFormView from "../view/waypoint-form.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
+import {isOnline} from "../utils/utils.js";
 import {UpdateType, UserAction} from "../const.js";
 
 const Mode = {
@@ -14,10 +15,11 @@ export const State = {
 };
 
 export default class Waypoint {
-  constructor(tripContainer, changeData, changeMode) {
+  constructor(tripContainer, changeData, changeMode, renderToast) {
     this._tripContainer = tripContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
+    this._renderToast = renderToast;
 
     this._waypointComponent = null;
     this._waypointFormComponent = null;
@@ -141,6 +143,15 @@ export default class Waypoint {
   }
 
   _handleFormSubmit(updatedWaypoint) {
+    if (!isOnline()) {
+      const message = `You can't save waypoint offline`;
+
+      this.setViewState(State.ABORTING);
+      this._renderToast(this._waypointFormComponent, message);
+
+      return;
+    }
+
     const isMinorUpdate = !(this._waypoint.startDate === updatedWaypoint.startDate
                             || this._waypoint.endDate === updatedWaypoint.endDate);
 
@@ -152,6 +163,15 @@ export default class Waypoint {
   }
 
   _handleFormDeleteClick(waypoint) {
+    if (!isOnline()) {
+      const message = `You can't delete waypoint offline`;
+
+      this.setViewState(State.ABORTING);
+      this._renderToast(this._waypointFormComponent, message);
+
+      return;
+    }
+
     this._changeData(
         UserAction.DELETE,
         UpdateType.MINOR,
@@ -165,6 +185,14 @@ export default class Waypoint {
   }
 
   _handleWaypointRollupClick() {
+    if (!isOnline()) {
+      const message = `You can't edit waypoint offline`;
+
+      this._renderToast(this._waypointComponent, message);
+
+      return;
+    }
+
     this._replaceWaypointToForm();
   }
 }

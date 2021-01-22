@@ -95,6 +95,8 @@ main {
     left: 130px;
     width: 2px;
     background-color: rgba(255, 255, 255, 0.58); }
+  .page-body__container--without-line::after {
+    content: none;}
 
 .page-body__page-main {
   -ms-flex-positive: 1;
@@ -1004,4 +1006,23 @@ main {
 }
 .shake {
   animation: shake 0.6s;
+}
+
+.notification-bar {
+  padding: 5px 0;
+  background-color: #ffd054;
+}
+
+.toast {
+  position: relative;
+}
+.toast__item {
+  padding: 15px 20px;
+  background-color: #fee;
+  color: #900;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  box-sizing: border-box;
+  width: 100%;
 }

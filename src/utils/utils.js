@@ -27,3 +27,7 @@ export const update = (items, updatedItem, index) => {
     ...items.slice(index + 1)
   ];
 };
+
+export const isOnline = () => {
+  return window.navigator.onLine;
+};
