@@ -29,7 +29,10 @@ export default class Abstract {
   }
 
   shake(callback) {
-    this.getElement().classList.add(`shake`);
+    const form = this.getElement().querySelector(`.event--edit`);
+
+    form.classList.add(`shake`);
+
     setTimeout(() => {
       callback();
     }, SHAKE_ANIMATION_TIMEOUT);

@@ -1,14 +1,30 @@
 import SortingView from "../view/sorting.js";
 import TripView from "../view/trip.js";
 import SiteMessageView from "../view/site-message.js";
+import ToastView from "../view/toast.js";
 import WaypointPresenter, {State as WaypointPresenterViewState} from "./waypoint.js";
 import WaypointNewPresenter from "./waypoint-new.js";
 import {SortingType, UpdateType, UserAction, FilterType} from "../const.js";
 import {remove, render, RenderPosition} from "../utils/render.js";
 import {sortByDate, sortByPrice, sortByTime} from "../utils/waypoint.js";
 
+const SHOW_TIME = 5000;
+
 export default class Trip {
-  constructor(tripContainer, loadingMessage, emptyTripMessage, errorMessage, waypointsModel, offersModel, destinationsModel, filterModel, updateAddButton, getFilteredWaypoints, api, siteMenuComponent) {
+  constructor(
+      tripContainer,
+      loadingMessage,
+      emptyTripMessage,
+      errorMessage,
+      waypointsModel,
+      offersModel,
+      destinationsModel,
+      filterModel,
+      updateAddButton,
+      getFilteredWaypoints,
+      api,
+      siteMenuComponent
+  ) {
     this._tripContainer = tripContainer;
     this._loadingMessage = loadingMessage;
     this._emptyTripMessage = emptyTripMessage;
@@ -28,14 +44,16 @@ export default class Trip {
 
     this._tripComponent = new TripView();
     this._statsComponent = null;
+    this._toastComponent = null;
 
     this._handleSortingTypeChange = this._handleSortingTypeChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
+    this._renderToast = this._renderToast.bind(this);
 
     this._waypointPresenter = new Map();
-    this._waypointNewPresenter = new WaypointNewPresenter(this._tripComponent, this._handleViewAction, this._updateAddButton);
+    this._waypointNewPresenter = new WaypointNewPresenter(this._tripComponent, this._handleViewAction, this._updateAddButton, this._renderToast);
 
     this._waypointsModel.addObserver(this._handleModelEvent);
     this._offersModel.addObserver(this._handleModelEvent);
@@ -61,6 +79,10 @@ export default class Trip {
     this._clearWaypoints();
     remove(this._sortingComponent);
     remove(this._siteMessageComponent);
+
+    if (this._toastComponent !== null) {
+      remove(this._toastComponent);
+    }
 
     if (resetSortingType) {
       this._currentSortingType = SortingType.DAY;
@@ -224,7 +246,7 @@ export default class Trip {
   }
 
   _renderWaypoint(waypoint) {
-    const waypointPresenter = new WaypointPresenter(this._tripComponent, this._handleViewAction, this._handleModeChange);
+    const waypointPresenter = new WaypointPresenter(this._tripComponent, this._handleViewAction, this._handleModeChange, this._renderToast);
 
     waypointPresenter.init(waypoint, this._offersModel, this._destinationsModel);
     this._waypointPresenter.set(waypoint.id, waypointPresenter);
@@ -266,5 +288,16 @@ export default class Trip {
 
     this._renderSorting();
     this._renderWaypoints(waypoints);
+  }
+
+  _renderToast(errorComponent, message) {
+    if (this._toastComponent !== null) {
+      remove(this._toastComponent);
+    }
+
+    this._toastComponent = new ToastView(message);
+    render(errorComponent, this._toastComponent, RenderPosition.AFTER);
+
+    setTimeout(remove, SHOW_TIME, this._toastComponent);
   }
 }

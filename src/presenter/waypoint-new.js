@@ -1,12 +1,14 @@
 import WaypointFormView from "../view/waypoint-form.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
+import {isOnline} from "../utils/utils.js";
 import {UpdateType, UserAction} from "../const.js";
 
 export default class WaypointNew {
-  constructor(tripContainer, changeData, updateAddButton) {
+  constructor(tripContainer, changeData, updateAddButton, renderToast) {
     this._tripContainer = tripContainer;
     this._changeData = changeData;
     this._updateAddButton = updateAddButton;
+    this._renderToast = renderToast;
 
     this._waypointFormComponent = null;
 
@@ -35,7 +37,7 @@ export default class WaypointNew {
       remove(this._waypointFormComponent);
       this._waypointFormComponent = null;
       document.removeEventListener(`keydown`, this._onEscKeyDown);
-      this._updateAddButton(true);
+      this._updateAddButton(isOnline());
     }
   }
 
@@ -66,6 +68,15 @@ export default class WaypointNew {
   }
 
   _handleFormSubmit(waypoint) {
+    if (!isOnline()) {
+      const message = `You can't create waypoint offline`;
+
+      this.setAborting();
+      this._renderToast(this._waypointFormComponent, message);
+
+      return;
+    }
+
     waypoint.isFavorite = false;
     this._changeData(
         UserAction.ADD,

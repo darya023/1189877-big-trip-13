@@ -1,11 +1,13 @@
 import SiteMenuView from "../view/site-menu.js";
 import StatsView from "../view/stats.js";
+import NotificationBarView from "../view/notification-bar.js";
 import AddButtonPresenter from "./add-button.js";
 import TripPresenter from "./trip.js";
 import TripInfoPresenter from "./trip-info.js";
 import FilterPresenter from "./filter.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
 import {filter} from "../utils/filter.js";
+import {isOnline} from "../utils/utils.js";
 import {UpdateType, MenuItem} from "../const.js";
 
 export default class Site {
@@ -64,6 +66,8 @@ export default class Site {
         this._api,
         this._siteMenuComponent
     );
+    this._isAddButtonDisabled = false;
+
     this._filterPresenter = new FilterPresenter(this._siteControlsElement, this._filterModel, this._waypointsModel);
     this._addButtonPresenter = new AddButtonPresenter(this._tripPresenter, this._tripMainElement, this._handleAddButtonClick);
 
@@ -78,7 +82,7 @@ export default class Site {
 
     this._filterPresenter.init();
     this._tripPresenter.init();
-    this._addButtonPresenter.init();
+    this._addButtonPresenter.init(isOnline());
 
     this._statsComponent = new StatsView(this._waypointsModel.getWaypoints());
     this._statsComponent.hide();
@@ -90,6 +94,18 @@ export default class Site {
     this._renderMenu(MenuItem.TABLE);
   }
 
+  online() {
+    this._updateAddButton(!this._isAddButtonDisabled && isOnline());
+    remove(this._notificationBarComponent);
+  }
+
+  offline() {
+    const message = `Connection lost: offline mode`;
+
+    this._renderNotificationBar(message);
+    this._updateAddButton(isOnline());
+  }
+
   _updateAddButton(isNotDisabled) {
     this._addButtonPresenter.destroy();
     this._addButtonPresenter.init(isNotDisabled);
@@ -99,6 +115,7 @@ export default class Site {
     this._waypoints = this._getWaypoints();
     this._filterPresenter.init();
     remove(this._statsComponent);
+    this._isAddButtonDisabled = false;
 
 
     if (updateType === UpdateType.ERROR) {
@@ -112,7 +129,7 @@ export default class Site {
     render(this._tripContainerElement, this._statsComponent, RenderPosition.BEFOREEND);
 
     if (updateType === UpdateType.INIT) {
-      this._updateAddButton(true);
+      this._updateAddButton(true && isOnline());
 
       if (this._waypoints.some(Boolean)) {
         this._tripInfoPresenter.init(this._waypoints);
@@ -121,7 +138,7 @@ export default class Site {
       return;
     }
 
-    this._updateAddButton(true);
+    this._updateAddButton(isOnline());
     this._tripInfoPresenter.destroy();
     this._tripInfoPresenter.init(this._waypoints);
   }
@@ -143,6 +160,14 @@ export default class Site {
   }
 
   _handleAddButtonClick() {
+    this._isAddButtonDisabled = true;
+
+    if (!isOnline()) {
+      this._updateAddButton(true);
+
+      return;
+    }
+
     if (this._tripPresenter.hidden) {
       remove(this._siteMenuComponent);
       this._renderMenu(MenuItem.TABLE);
@@ -174,6 +199,11 @@ export default class Site {
     this._siteMenuComponent = new SiteMenuView(this._menuItems);
     this._siteMenuComponent.setMenuClickHandler(this._handleSiteMenuClick);
     render(this._siteControlsElement, this._siteMenuComponent, RenderPosition.AFTERBEGIN);
+  }
+
+  _renderNotificationBar(message) {
+    this._notificationBarComponent = new NotificationBarView(message);
+    render(this._siteContainer, this._notificationBarComponent, RenderPosition.AFTERBEGIN);
   }
 
   _getWaypoints() {

@@ -49,4 +49,32 @@ export default class Offers extends Observer {
 
     return adaptedOffers;
   }
+
+  static adaptToServer(offers) {
+    const adaptedOffers = Object.assign(
+        {},
+        offers,
+        {
+          offers: offers.offers.map((offer) => {
+            return Object.assign(
+                {},
+                offer,
+                {
+                  title: offer.name,
+                }
+            );
+          }),
+          type: offers.typeName,
+        }
+    );
+
+    adaptedOffers.offers.forEach((adaptedOffer) => {
+      delete adaptedOffer.name;
+      delete adaptedOffer.checked;
+      delete adaptedOffer.value;
+    });
+    delete adaptedOffers.typeName;
+
+    return adaptedOffers;
+  }
 }
