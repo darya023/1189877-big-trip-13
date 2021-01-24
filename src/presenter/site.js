@@ -143,7 +143,7 @@ export default class Site {
       return;
     }
 
-    this._isSyncNeeded = true;
+    this._isSyncNeeded = !isOnline();
     this._updateAddButton(isOnline());
     this._tripInfoPresenter.destroy();
     this._tripInfoPresenter.init(this._waypoints);

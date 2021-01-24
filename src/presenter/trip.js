@@ -194,25 +194,26 @@ export default class Trip {
       case UserAction.UPDATE:
         if (!justWaypointUpdate) {
           this._waypointPresenter.get(update.id).setViewState(WaypointPresenterViewState.SAVING);
-          this._api.updateWaypoint(update)
-            .then((waypoint) => {
-              waypoint.offers = this._offersModel.getOffers(waypoint.type.name, true).map((waypointOffer) => {
-                const offer = waypoint.offers.filter((currentOffers) => currentOffers.value === waypointOffer.value)[0];
-
-                return Object.assign(
-                    {},
-                    waypointOffer,
-                    {
-                      checked: offer ? offer.checked : false
-                    }
-                );
-              });
-              this._waypointsModel.updateWaypoint(updateType, waypoint);
-            })
-            .catch(() => {
-              this._waypointPresenter.get(update.id).setViewState(WaypointPresenterViewState.ABORTING);
-            });
         }
+
+        this._api.updateWaypoint(update)
+          .then((waypoint) => {
+            waypoint.offers = this._offersModel.getOffers(waypoint.type.name, true).map((waypointOffer) => {
+              const offer = waypoint.offers.filter((currentOffers) => currentOffers.value === waypointOffer.value)[0];
+
+              return Object.assign(
+                  {},
+                  waypointOffer,
+                  {
+                    checked: offer ? offer.checked : false
+                  }
+              );
+            });
+            this._waypointsModel.updateWaypoint(updateType, waypoint);
+          })
+          .catch(() => {
+            this._waypointPresenter.get(update.id).setViewState(WaypointPresenterViewState.ABORTING);
+          });
         break;
       case UserAction.ADD:
         this._waypointNewPresenter.setSaving();
