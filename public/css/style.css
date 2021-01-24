@@ -250,6 +250,7 @@ main {
   font-size: 21px;
   line-height: 25px;
   text-decoration: none;
+  text-transform: capitalize;
   -webkit-user-select: none;
      -moz-user-select: none;
       -ms-user-select: none;

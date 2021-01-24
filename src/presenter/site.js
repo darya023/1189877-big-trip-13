@@ -67,6 +67,7 @@ export default class Site {
         this._siteMenuComponent
     );
     this._isAddButtonDisabled = false;
+    this._isSyncNeeded = false;
 
     this._filterPresenter = new FilterPresenter(this._siteControlsElement, this._filterModel, this._waypointsModel);
     this._addButtonPresenter = new AddButtonPresenter(this._tripPresenter, this._tripMainElement, this._handleAddButtonClick);
@@ -97,6 +98,11 @@ export default class Site {
   online() {
     this._updateAddButton(!this._isAddButtonDisabled && isOnline());
     remove(this._notificationBarComponent);
+
+    if (this._isSyncNeeded) {
+      this._api.sync();
+      this._isSyncNeeded = false;
+    }
   }
 
   offline() {
@@ -116,7 +122,6 @@ export default class Site {
     this._filterPresenter.init();
     remove(this._statsComponent);
     this._isAddButtonDisabled = false;
-
 
     if (updateType === UpdateType.ERROR) {
       this._updateAddButton();
@@ -138,6 +143,7 @@ export default class Site {
       return;
     }
 
+    this._isSyncNeeded = true;
     this._updateAddButton(isOnline());
     this._tripInfoPresenter.destroy();
     this._tripInfoPresenter.init(this._waypoints);
@@ -182,7 +188,7 @@ export default class Site {
 
   _setMenuActiveItem(menuItem) {
     this._menuItems.forEach((item) => {
-      if (item.name.toUpperCase() === menuItem) {
+      if (item.name === menuItem) {
         item.active = true;
 
         return;
