@@ -24,7 +24,7 @@ export default class Filter {
     const prevFilterComponent = this._filterComponent;
 
     this._filterComponent = new FilterView(filters, this._currentFilter);
-    this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+    this.setHandlers();
 
     if (prevFilterComponent === null) {
       render(this._filterContainer, this._filterComponent, RenderPosition.BEFOREEND);
@@ -33,6 +33,14 @@ export default class Filter {
 
     replace(this._filterComponent, prevFilterComponent);
     remove(prevFilterComponent);
+  }
+
+  setHandlers() {
+    this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+  }
+
+  removeHandlers() {
+    this._filterComponent.removeFilterTypeChangeHandler(this._handleFilterTypeChange);
   }
 
   _handleModelEvent() {
@@ -52,17 +60,19 @@ export default class Filter {
     return [
       {
         type: FilterType.EVERYTHING,
-        name: `everything`,
+        name: FilterType.EVERYTHING,
         disable: false,
       },
       {
         type: FilterType.FUTURE,
-        name: `future`,
+        name: FilterType.FUTURE,
+        // name: `future`,
         disable: !filter[FilterType.FUTURE](waypoints).some(Boolean),
       },
       {
         type: FilterType.PAST,
-        name: `past`,
+        name: FilterType.PAST,
+        // name: `past`,
         disable: !filter[FilterType.PAST](waypoints).some(Boolean),
       },
     ];

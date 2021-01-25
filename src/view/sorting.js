@@ -4,21 +4,21 @@ import {SortingType} from "../const.js";
 const createSorting = (sortingItems, currentSortingType) => {
   const result = [];
 
-  for (let i = 0; i < sortingItems.length; i++) {
-    const elem = `<div class="trip-sort__item  trip-sort__item--${sortingItems[i].type}">
+  for (const sortingItem of sortingItems) {
+    const elem = `<div class="trip-sort__item  trip-sort__item--${sortingItem.type}">
       <input 
-        id="sort-${sortingItems[i].type}" 
+        id="sort-${sortingItem.type}" 
         class="trip-sort__input  
         visually-hidden" 
         type="radio" 
         name="trip-sort" 
-        value="sort-${sortingItems[i].type}"
-        data-sortingType="${SortingType[sortingItems[i].type.toUpperCase()]}"
-        ${(currentSortingType === SortingType[sortingItems[i].type.toUpperCase()]) ? ` checked` : ``}
-        ${sortingItems[i].disabled ? `disabled` : ``}
+        value="sort-${sortingItem.type}"
+        data-sortingType="${SortingType[sortingItem.type.toUpperCase()]}"
+        ${(currentSortingType === SortingType[sortingItem.type.toUpperCase()]) ? ` checked` : ``}
+        ${(sortingItem.disabled) ? `disabled` : ``}
       >
-      <label class="trip-sort__btn" for="sort-${sortingItems[i].type}">
-        ${sortingItems[i].name}
+      <label class="trip-sort__btn" for="sort-${sortingItem.type}">
+        ${sortingItem.name}
       </label>
     </div>`;
 

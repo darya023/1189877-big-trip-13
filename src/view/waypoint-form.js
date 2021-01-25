@@ -44,8 +44,8 @@ const createOffers = (offers, isDisabled) => {
           id="event-offer-${offer.value}-1" 
           type="checkbox" 
           name="event-offer-${offer.value}"
-          ${offer.checked ? ` checked` : ``}
-          ${isDisabled ? ` disabled` : ``}
+          ${(offer.checked) ? ` checked` : ``}
+          ${(isDisabled) ? ` disabled` : ``}
         >
         <label class="event__offer-label" for="event-offer-${offer.value}-1">
           <span class="event__offer-title">${offer.name}</span>
@@ -173,7 +173,7 @@ const createWaypointFormTemplate = (waypoint, isCreateForm, destinations) => {
           <span class="visually-hidden">Choose event type</span>
           <img class="event__type-icon" width="17" height="17" src="${type.img.url}" alt="${type.img.alt}">
         </label>
-        <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? ` disabled` : ``}>
+        <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${(isDisabled) ? ` disabled` : ``}>
 
         <div class="event__type-list">
           <fieldset class="event__type-group">
@@ -194,7 +194,7 @@ const createWaypointFormTemplate = (waypoint, isCreateForm, destinations) => {
           name="event-destination" 
           value="${destination.name}" 
           list="destination-list-1"
-          ${isDisabled ? ` disabled` : ``}
+          ${(isDisabled) ? ` disabled` : ``}
         >
         <datalist id="destination-list-1">
           ${destinationDropdown}
@@ -209,7 +209,7 @@ const createWaypointFormTemplate = (waypoint, isCreateForm, destinations) => {
           type="text"
           name="event-start-time"
           value="${startTime}"
-          ${isDisabled ? ` disabled` : ``}
+          ${(isDisabled) ? ` disabled` : ``}
         >
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">To</label>
@@ -219,7 +219,7 @@ const createWaypointFormTemplate = (waypoint, isCreateForm, destinations) => {
           type="text"
           name="event-end-time"
           value="${endTime}"
-          ${isDisabled ? ` disabled` : ``}
+          ${(isDisabled) ? ` disabled` : ``}
         >
       </div>
 
@@ -235,17 +235,17 @@ const createWaypointFormTemplate = (waypoint, isCreateForm, destinations) => {
           name="event-price"
           min="0"
           value="${price}"
-          ${isDisabled ? ` disabled` : ``}
+          ${(isDisabled) ? ` disabled` : ``}
         >
       </div>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? ` disabled` : ``} >
-        ${isSaving ? `Saving...` : `Save`}
+      <button class="event__save-btn  btn  btn--blue" type="submit" ${(isDisabled) ? ` disabled` : ``} >
+        ${(isSaving) ? `Saving...` : `Save`}
       </button>
-      <button class="event__reset-btn" type="reset" ${isDisabled ? ` disabled` : ``}>
+      <button class="event__reset-btn" type="reset" ${(isDisabled) ? ` disabled` : ``}>
         ${buttonResetText}
       </button>
-      ${isCreateForm ? `` : `
+      ${(isCreateForm) ? `` : `
       <button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>

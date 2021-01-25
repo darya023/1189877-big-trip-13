@@ -7,8 +7,12 @@ const createTitle = (names) => {
   }
 
   const lastIndex = names.length - 1;
-  const result = names[0] + ` &mdash; ... &mdash; ` + names[lastIndex];
+  const result = `${names[0]} &mdash; ... &mdash; ${names[lastIndex]}`;
   return result;
+};
+
+const formatDate = (startDate, endDate, startDateFormat, endDateFormat) => {
+  return `${humanizeDate(startDate, startDateFormat)} &nbsp;&mdash;&nbsp; ${humanizeDate(endDate, endDateFormat)}`;
 };
 
 const createDate = (startDate, endDate) => {
@@ -16,14 +20,14 @@ const createDate = (startDate, endDate) => {
   const endMonth = endDate.getMonth();
 
   if (startMonth !== endMonth) {
-    return humanizeDate(startDate, `MMM DD`) + `&nbsp;&mdash;&nbsp;` + humanizeDate(endDate, `MMM DD`);
+    return formatDate(startDate, endDate, `MMM DD`, `MMM DD`);
   }
 
-  return humanizeDate(startDate, `MMM DD`) + `&nbsp;&mdash;&nbsp;` + humanizeDate(endDate, `DD`);
+  return formatDate(startDate, endDate, `MMM DD`, `DD`);
 };
 
 const createTotalPrice = (prices, offers) => {
-  const price = prices.reduce((sum, current) => +sum + +current, 0);
+  const price = prices.reduce((sum, current) => Number(sum) + Number(current), 0);
   const offersPrice = offers.reduce((sum, current) => {
     let result = current.price;
 
@@ -31,10 +35,10 @@ const createTotalPrice = (prices, offers) => {
       result = 0;
     }
 
-    return +sum + +result;
+    return Number(sum) + Number(result);
   }, 0);
 
-  const result = +price + +offersPrice;
+  const result = Number(price) + Number(offersPrice);
 
   return result;
 };

@@ -3,20 +3,20 @@ import AbstractView from "./abstract.js";
 const createFilterItems = (filters, currentFilterType) => {
   const result = [];
 
-  for (let i = 0; i < filters.length; i++) {
+  for (const filter of filters) {
     const elem = `<div class="trip-filters__filter">
       <input 
-        id="filter-${filters[i].type}"
+        id="filter-${filter.type}"
         class="trip-filters__filter-input
         visually-hidden"
         type="radio"
         name="trip-filter"
-        value="${filters[i].type}"
-        ${filters[i].type === currentFilterType ? ` checked` : ``}
-        ${filters[i].disable ? ` disabled` : ``}
+        value="${filter.type}"
+        ${(filter.type === currentFilterType) ? ` checked` : ``}
+        ${(filter.disable) ? ` disabled` : ``}
       >
-      <label class="trip-filters__filter-label" for="filter-${filters[i].type}">
-        ${filters[i].type}
+      <label class="trip-filters__filter-label" for="filter-${filter.type}">
+        ${filter.type}
       </label>
     </div>`;
 
@@ -41,6 +41,9 @@ export default class Filter extends AbstractView {
     super();
     this._filters = filters;
     this._currentFilterType = currentFilterType;
+
+    this._filterElements = this._getChildElements(`.trip-filters__filter-input`);
+
     this._filterTypeClickHandler = this._filterTypeClickHandler.bind(this);
   }
 
@@ -57,12 +60,16 @@ export default class Filter extends AbstractView {
   }
 
   setFilterTypeChangeHandler(callback) {
-    const filterElements = this._getChildElements(`.trip-filters__filter-input`);
-
     this._callback.filterTypeChange = callback;
-    filterElements.forEach((element) => {
+    this._filterElements.forEach((element) => {
       element.addEventListener(`click`, this._filterTypeClickHandler);
     });
 
+  }
+
+  removeFilterTypeChangeHandler() {
+    this._filterElements.forEach((element) => {
+      element.removeEventListener(`click`, this._filterTypeClickHandler);
+    });
   }
 }

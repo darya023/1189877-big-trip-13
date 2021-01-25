@@ -22,20 +22,20 @@ export default class Api {
 
   getWaypoints() {
     return this._load({url: `points`})
-        .then(Api.toJSON)
-        .then((waypoints) => waypoints.map(WaypointsModel.adaptToClient));
+      .then(Api.toJSON)
+      .then((waypoints) => waypoints.map(WaypointsModel.adaptToClient));
   }
 
   getOffers() {
     return this._load({url: `offers`})
-        .then(Api.toJSON)
-        .then((offers) => offers.map(OffersModel.adaptToClient));
+      .then(Api.toJSON)
+      .then((offers) => offers.map(OffersModel.adaptToClient));
   }
 
   getDestinations() {
     return this._load({url: `destinations`})
-        .then(Api.toJSON)
-        .then((destinations) => destinations.map(DestinationsModel.adaptToClient));
+      .then(Api.toJSON)
+      .then((destinations) => destinations.map(DestinationsModel.adaptToClient));
   }
 
   updateWaypoint(waypoint) {
@@ -45,8 +45,8 @@ export default class Api {
       body: JSON.stringify(WaypointsModel.adaptToServer(waypoint)),
       headers: new Headers({"Content-Type": `application/json`})
     })
-        .then(Api.toJSON)
-        .then(WaypointsModel.adaptToClient);
+      .then(Api.toJSON)
+      .then(WaypointsModel.adaptToClient);
   }
 
   addWaypoint(waypoint) {
@@ -89,8 +89,8 @@ export default class Api {
         `${this._endPoint}/${url}`,
         {method, body, headers}
     )
-        .then(Api.checkStatus)
-        .catch(Api.catchError);
+      .then(Api.checkStatus)
+      .catch(Api.catchError);
   }
 
   static checkStatus(response) {
@@ -108,7 +108,7 @@ export default class Api {
     return response.json();
   }
 
-  static catchError(err) {
-    throw err;
+  static catchError(error) {
+    throw error;
   }
 }

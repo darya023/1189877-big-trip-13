@@ -47,7 +47,7 @@ const setOffers = (waypoints, offers) => {
             {},
             waypointOffer,
             {
-              checked: offer ? offer.checked : false
+              checked: (offer) ? offer.checked : false
             }
         );
       });

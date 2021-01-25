@@ -9,7 +9,7 @@ const StoreKey = {
 
 const getSyncedWaypoints = (items) => {
   return items.filter(({success}) => success)
-      .map(({payload}) => payload.point);
+    .map(({payload}) => payload.point);
 };
 
 const createStoreStructure = (items) => {
@@ -69,10 +69,10 @@ export default class Provider {
   updateWaypoint(waypoint) {
     if (isOnline()) {
       return this._api.updateWaypoint(waypoint)
-          .then((updatedWaypoint) => {
-            this._store.setItem(StoreKey.WAYPOINTS, WaypointsModel.adaptToServer(updatedWaypoint), updatedWaypoint.id);
-            return updatedWaypoint;
-          });
+        .then((updatedWaypoint) => {
+          this._store.setItem(StoreKey.WAYPOINTS, WaypointsModel.adaptToServer(updatedWaypoint), updatedWaypoint.id);
+          return updatedWaypoint;
+        });
     }
 
     this._store.setItem(StoreKey.WAYPOINTS, WaypointsModel.adaptToServer(Object.assign({}, waypoint)), waypoint.id);
@@ -83,10 +83,10 @@ export default class Provider {
   addWaypoint(waypoint) {
     if (isOnline()) {
       return this._api.addWaypoint(waypoint)
-          .then((newWaypoint) => {
-            this._store.setItem(newWaypoint.id, WaypointsModel.adaptToServer(newWaypoint));
-            return newWaypoint;
-          });
+        .then((newWaypoint) => {
+          this._store.setItem(newWaypoint.id, WaypointsModel.adaptToServer(newWaypoint));
+          return newWaypoint;
+        });
     }
 
     return Promise.resolve(waypoint);
@@ -95,7 +95,7 @@ export default class Provider {
   deleteWaypoint(waypoint) {
     if (isOnline()) {
       return this._api.deleteWaypoint(waypoint)
-          .then(() => this._store.removeItem(waypoint.id));
+        .then(() => this._store.removeItem(waypoint.id));
     }
 
     return Promise.resolve(waypoint);
@@ -106,12 +106,12 @@ export default class Provider {
       const storeWaypoints = Object.values(this._store.getItems(StoreKey.WAYPOINTS));
 
       return this._api.sync(storeWaypoints)
-          .then((response) => {
-            const updatedWaypoints = getSyncedWaypoints(response.updated);
-            const items = createStoreStructure([...updatedWaypoints]);
+        .then((response) => {
+          const updatedWaypoints = getSyncedWaypoints(response.updated);
+          const items = createStoreStructure([...updatedWaypoints]);
 
-            this._store.setItems(StoreKey.WAYPOINTS, items);
-          });
+          this._store.setItems(StoreKey.WAYPOINTS, items);
+        });
     }
 
     return Promise.reject(new Error(`Sync data failed`));
