@@ -189,10 +189,13 @@ export default class Trip {
     }
   }
 
-  _handleViewAction(actionType, updateType, update) {
+  _handleViewAction(actionType, updateType, update, justWaypointUpdate) {
     switch (actionType) {
       case UserAction.UPDATE:
-        this._waypointPresenter.get(update.id).setViewState(WaypointPresenterViewState.SAVING);
+        if (!justWaypointUpdate) {
+          this._waypointPresenter.get(update.id).setViewState(WaypointPresenterViewState.SAVING);
+        }
+
         this._api.updateWaypoint(update)
           .then((waypoint) => {
             waypoint.offers = this._offersModel.getOffers(waypoint.type.name, true).map((waypointOffer) => {

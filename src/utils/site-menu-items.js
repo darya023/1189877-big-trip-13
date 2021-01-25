@@ -1,12 +1,14 @@
+import {MenuItem} from "../const";
+
 export const generateSiteMenuItems = () => {
 
   return [
     {
-      name: `Table`,
+      name: MenuItem.TABLE,
       href: `#`
     },
     {
-      name: `Stats`,
+      name: MenuItem.STATS,
       href: `#`
     }
   ];

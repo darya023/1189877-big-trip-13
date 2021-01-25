@@ -14,7 +14,7 @@ export default class WaypointNew {
 
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleFormDeleteClick = this._handleFormDeleteClick.bind(this);
-    this._onEscKeyDown = this._onEscKeyDown.bind(this);
+    this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
   init(offersModel, destinationsModel) {
@@ -28,7 +28,7 @@ export default class WaypointNew {
       this._waypointFormComponent.setFormDeleteHandler(this._handleFormDeleteClick);
 
       render(this._tripContainer.getElement(), this._waypointFormComponent, RenderPosition.AFTERBEGIN);
-      document.addEventListener(`keydown`, this._onEscKeyDown);
+      document.addEventListener(`keydown`, this._escKeyDownHandler);
     }
   }
 
@@ -36,7 +36,7 @@ export default class WaypointNew {
     if (this._waypointFormComponent !== null) {
       remove(this._waypointFormComponent);
       this._waypointFormComponent = null;
-      document.removeEventListener(`keydown`, this._onEscKeyDown);
+      document.removeEventListener(`keydown`, this._escKeyDownHandler);
       this._updateAddButton(isOnline());
     }
   }
@@ -60,7 +60,7 @@ export default class WaypointNew {
     this._waypointFormComponent.shake(resetFormState);
   }
 
-  _onEscKeyDown(event) {
+  _escKeyDownHandler(event) {
     if (event.key === `Esc` || event.key === `Escape`) {
       event.preventDefault();
       this.destroy();

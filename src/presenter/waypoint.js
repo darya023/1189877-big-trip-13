@@ -30,7 +30,7 @@ export default class Waypoint {
     this._handleFormRollupClick = this._handleFormRollupClick.bind(this);
     this._handleFormDeleteClick = this._handleFormDeleteClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
-    this._onEscKeyDown = this._onEscKeyDown.bind(this);
+    this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
   init(waypoint, offersModel, destinationsModel) {
@@ -109,18 +109,18 @@ export default class Waypoint {
 
   _replaceFormToWaypoint() {
     replace(this._waypointComponent, this._waypointFormComponent);
-    document.removeEventListener(`keydown`, this._onEscKeyDown);
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
     this._mode = Mode.DEFAULT;
   }
 
   _replaceWaypointToForm() {
     replace(this._waypointFormComponent, this._waypointComponent);
-    document.addEventListener(`keydown`, this._onEscKeyDown);
+    document.addEventListener(`keydown`, this._escKeyDownHandler);
     this._changeMode();
     this._mode = Mode.EDITING;
   }
 
-  _onEscKeyDown(event) {
+  _escKeyDownHandler(event) {
     if (event.key === `Esc` || event.key === `Escape`) {
       event.preventDefault();
       this._waypointFormComponent.reset(this._waypoint);
@@ -138,7 +138,8 @@ export default class Waypoint {
             {
               isFavorite: !this._waypoint.isFavorite
             }
-        )
+        ),
+        true
     );
   }
 

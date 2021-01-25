@@ -11,14 +11,6 @@ export const TYPES = [
   `Restaurant`
 ];
 
-export const DESTINATIONS = [
-  `Amsterdam`,
-  `Chamonix`,
-  `Geneva`
-];
-
-export const DESCRIPTION = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
-
 export const WAYPOINT_FORM_DEFAULT = {
   type: {
     name: TYPES[0],
@@ -55,9 +47,9 @@ export const UserAction = {
 export const UpdateType = {
   PATCH: `PATCH`, // обновить часть списка (ТМ)
   MINOR: `MINOR`, // обновить весь список ТМ
-  MAJOR: `MAJOR`, // щбновить список и сбросить сортировку
+  MAJOR: `MAJOR`, // обновить список и сбросить сортировку
   INIT: `INIT`, // инициализация приложения
-  ERROR: `ERROR`, // инициализация приложения
+  ERROR: `ERROR`, // ошибка приложения
 };
 
 export const FilterType = {
@@ -66,12 +58,7 @@ export const FilterType = {
   PAST: `past`
 };
 
-export const ErrorMessage = {
-  PRICE: `Price must be a decimal number`,
-  DESTINATION: `Destination must be selected from the list`,
-};
-
 export const MenuItem = {
-  TABLE: `TABLE`,
-  STATS: `STATS`
+  TABLE: `table`,
+  STATS: `stats`
 };
