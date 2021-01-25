@@ -4,7 +4,7 @@ const createAddButtonTemplate = (isNotDisabled) => {
   return `<button 
       class="trip-main__event-add-btn  btn  btn--big  btn--yellow" 
       type="button"
-      ${isNotDisabled ? `` : `disabled`}
+      ${(isNotDisabled) ? `` : `disabled`}
     >
       New event
     </button>`;

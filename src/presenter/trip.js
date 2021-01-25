@@ -43,7 +43,6 @@ export default class Trip {
     this._isError = false;
 
     this._tripComponent = new TripView();
-    this._statsComponent = null;
     this._toastComponent = null;
 
     this._handleSortingTypeChange = this._handleSortingTypeChange.bind(this);
@@ -140,7 +139,7 @@ export default class Trip {
       case SortingType.PRICE:
         return sortByPrice(filteredWaypoints);
       default:
-        throw new Error(`Sorting type not implemented: ` + this._currentSortingType);
+        throw new Error(`Sorting type not implemented: ${this._currentSortingType}`);
     }
   }
 
@@ -205,7 +204,7 @@ export default class Trip {
                   {},
                   waypointOffer,
                   {
-                    checked: offer ? offer.checked : false
+                    checked: (offer) ? offer.checked : false
                   }
               );
             });

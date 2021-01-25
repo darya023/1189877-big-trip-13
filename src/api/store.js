@@ -8,7 +8,7 @@ export default class Store {
     try {
       const store = JSON.parse(this._storage.getItem(this._storeKey));
 
-      return key ? store[key] : store || {};
+      return (key) ? store[key] : store || {};
     } catch (error) {
       return {};
     }

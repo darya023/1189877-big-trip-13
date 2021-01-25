@@ -8,7 +8,7 @@ import FilterPresenter from "./filter.js";
 import {render, RenderPosition, remove} from "../utils/render.js";
 import {filter} from "../utils/filter.js";
 import {isOnline} from "../utils/utils.js";
-import {UpdateType, MenuItem} from "../const.js";
+import {UpdateType, MenuItem, FilterType} from "../const.js";
 
 export default class Site {
   constructor(
@@ -152,15 +152,18 @@ export default class Site {
   _handleSiteMenuClick(menuItem) {
     remove(this._siteMenuComponent);
     this._renderMenu(menuItem);
+    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
 
     switch (menuItem) {
       case MenuItem.TABLE:
         this._statsComponent.hide();
         this._tripPresenter.show();
+        this._filterPresenter.setHandlers();
         break;
       case MenuItem.STATS:
         this._statsComponent.show();
         this._tripPresenter.hide();
+        this._filterPresenter.removeHandlers();
         break;
     }
   }

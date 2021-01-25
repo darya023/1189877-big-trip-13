@@ -3,9 +3,9 @@ import AbstractView from "./abstract.js";
 const createMenuItems = (menuItems) => {
   const result = [];
 
-  for (let i = 0; i < menuItems.length; i++) {
-    const elem = `<a class="trip-tabs__btn${ (menuItems[i].active) ? ` trip-tabs__btn--active` : ``}" href="#" value="${menuItems[i].name}">
-      ${menuItems[i].name}
+  for (const menuItem of menuItems) {
+    const elem = `<a class="trip-tabs__btn${ (menuItem.active) ? ` trip-tabs__btn--active` : ``}" href="#" value="${menuItem.name}">
+      ${menuItem.name}
     </a>`;
 
     result.push(elem);
