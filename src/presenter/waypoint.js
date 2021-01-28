@@ -15,14 +15,16 @@ export const State = {
 };
 
 export default class Waypoint {
-  constructor(tripContainer, changeData, changeMode, renderToast) {
+  constructor(tripContainer, changeData, changeMode, renderToast, removeToast) {
     this._tripContainer = tripContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
     this._renderToast = renderToast;
+    this._removeToast = removeToast;
 
     this._waypointComponent = null;
     this._waypointFormComponent = null;
+    this._isWaypointFormComponentActive = false;
     this._mode = Mode.DEFAULT;
 
     this._handleWaypointRollupClick = this._handleWaypointRollupClick.bind(this);
@@ -81,11 +83,13 @@ export default class Waypoint {
 
   setViewState(state) {
     const resetFormState = () => {
-      this._waypointFormComponent.updateData({
-        isDisabled: false,
-        isSaving: false,
-        isDeleting: false
-      });
+      if (this._isWaypointFormComponentActive) {
+        this._waypointFormComponent.updateData({
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false
+        });
+      }
     };
 
     switch (state) {
@@ -108,13 +112,16 @@ export default class Waypoint {
   }
 
   _replaceFormToWaypoint() {
+    this._removeToast();
     replace(this._waypointComponent, this._waypointFormComponent);
+    this._isWaypointFormComponentActive = false;
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
     this._mode = Mode.DEFAULT;
   }
 
   _replaceWaypointToForm() {
     replace(this._waypointFormComponent, this._waypointComponent);
+    this._isWaypointFormComponentActive = true;
     document.addEventListener(`keydown`, this._escKeyDownHandler);
     this._changeMode();
     this._mode = Mode.EDITING;
@@ -155,6 +162,42 @@ export default class Waypoint {
 
     const isMinorUpdate = !(this._waypoint.startDate === updatedWaypoint.startDate
                             || this._waypoint.endDate === updatedWaypoint.endDate);
+
+    if (this._destinationsModel.getDestination(updatedWaypoint.destination.name) === undefined) {
+      const message = `Destination field has invalid value. Please choose one from the list`;
+
+      this.setViewState(State.ABORTING);
+      this._renderToast(this._waypointFormComponent, message);
+
+      return;
+    }
+
+    if (updatedWaypoint.startDate === ``) {
+      const message = `Start date is invalid`;
+
+      this.setViewState(State.ABORTING);
+      this._renderToast(this._waypointFormComponent, message);
+
+      return;
+    }
+
+    if (updatedWaypoint.endDate === ``) {
+      const message = `End date is invalid`;
+
+      this.setViewState(State.ABORTING);
+      this._renderToast(this._waypointFormComponent, message);
+
+      return;
+    }
+
+    if (updatedWaypoint.price === ``) {
+      const message = `Price is invalid`;
+
+      this.setViewState(State.ABORTING);
+      this._renderToast(this._waypointFormComponent, message);
+
+      return;
+    }
 
     this._changeData(
         UserAction.UPDATE,

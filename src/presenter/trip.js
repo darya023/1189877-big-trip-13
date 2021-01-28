@@ -50,9 +50,10 @@ export default class Trip {
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._renderToast = this._renderToast.bind(this);
+    this._removeToast = this._removeToast.bind(this);
 
     this._waypointPresenter = new Map();
-    this._waypointNewPresenter = new WaypointNewPresenter(this._tripComponent, this._handleViewAction, this._updateAddButton, this._renderToast);
+    this._waypointNewPresenter = new WaypointNewPresenter(this._tripComponent, this._handleViewAction, this._updateAddButton, this._renderToast, this._removeToast);
 
     this._waypointsModel.addObserver(this._handleModelEvent);
     this._offersModel.addObserver(this._handleModelEvent);
@@ -165,6 +166,8 @@ export default class Trip {
     switch (updateType) {
       case UpdateType.PATCH:
         this._waypointPresenter.get(data.id).init(data, this._offersModel, this._destinationsModel);
+        this.destroy();
+        this._renderTrip();
         break;
       case UpdateType.MINOR:
         this.destroy();
@@ -248,7 +251,11 @@ export default class Trip {
   }
 
   _renderWaypoint(waypoint) {
-    const waypointPresenter = new WaypointPresenter(this._tripComponent, this._handleViewAction, this._handleModeChange, this._renderToast);
+    if (this._toastComponent !== null) {
+      remove(this._toastComponent);
+    }
+
+    const waypointPresenter = new WaypointPresenter(this._tripComponent, this._handleViewAction, this._handleModeChange, this._renderToast, this._removeToast);
 
     waypointPresenter.init(waypoint, this._offersModel, this._destinationsModel);
     this._waypointPresenter.set(waypoint.id, waypointPresenter);
@@ -293,13 +300,17 @@ export default class Trip {
   }
 
   _renderToast(errorComponent, message) {
-    if (this._toastComponent !== null) {
-      remove(this._toastComponent);
-    }
+    this._removeToast();
 
     this._toastComponent = new ToastView(message);
     render(errorComponent, this._toastComponent, RenderPosition.AFTER);
 
     setTimeout(remove, SHOW_TIME, this._toastComponent);
+  }
+
+  _removeToast() {
+    if (this._toastComponent !== null) {
+      remove(this._toastComponent);
+    }
   }
 }

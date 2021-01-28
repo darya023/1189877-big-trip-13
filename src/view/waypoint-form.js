@@ -99,7 +99,7 @@ const createPhotos = (photos) => {
 };
 
 const createPhoto = (photos) => {
-  let result = [];
+  const result = [];
 
   for (const photo of photos) {
     const elem = `<img class="event__photo" src="${photo.url}" alt="${photo.alt}" loading="lazy">`;
@@ -357,26 +357,49 @@ export default class WaypointForm extends Smart {
   }
 
   _waypointStartDateChangeHandler([selectedDate]) {
-    const prevEndDate = this._endDatepicker.parseDate(this._endDatepicker.input.value);
+    if (selectedDate) {
+      const prevEndDate = this._endDatepicker.parseDate(this._endDatepicker.input.value);
+
+      this.updateData(
+          {
+            startDate: selectedDate,
+          },
+          true
+      );
+      this._endDatepicker.set(`minDate`, humanizeDate(selectedDate, `DD/MM/YY HH:mm`));
+
+      if (selectedDate > prevEndDate) {
+        this._endDatepicker.setDate(humanizeDate(selectedDate, `DD/MM/YY HH:mm`));
+        this._waypointEndDateChangeHandler([selectedDate]);
+      }
+
+      return;
+    }
 
     this.updateData(
         {
-          startDate: selectedDate,
+          startDate: ``,
         },
         true
     );
-    this._endDatepicker.set(`minDate`, humanizeDate(selectedDate, `DD/MM/YY HH:mm`));
-
-    if (selectedDate > prevEndDate) {
-      this._endDatepicker.setDate(humanizeDate(selectedDate, `DD/MM/YY HH:mm`));
-      this._waypointEndDateChangeHandler([selectedDate]);
-    }
   }
 
   _waypointEndDateChangeHandler([selectedDate]) {
+    if (selectedDate) {
+      this.updateData(
+          {
+            endDate: selectedDate,
+          },
+          true
+      );
+
+      return;
+    }
+
+
     this.updateData(
         {
-          endDate: selectedDate,
+          endDate: ``,
         },
         true
     );
@@ -445,7 +468,9 @@ export default class WaypointForm extends Smart {
     } else {
       this.updateData({
         destination: {
-          name: destination
+          name: destination,
+          description: ``,
+          photos: [],
         }
       });
     }
