@@ -4,8 +4,6 @@ import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import he from "he";
 
-dayjs.extend(duration);
-
 const getDurationTime = (time) => {
   const days = time.days();
   const hours = time.hours();
@@ -35,7 +33,7 @@ const getDurationTime = (time) => {
     const value = item.value;
     const format = item.format;
 
-    if (value) {
+    if (days || (hours && item.name === `hours` || hours && item.name === `minutes`) || !hours && item.name === `minutes`) {
       const elem = `0${value}`;
       const formattedElem = elem.slice(elem.length - formattingLenght) + format;
 
@@ -114,6 +112,8 @@ const createWaypointTemplate = (waypoint) => {
   </div>
 </li>`;
 };
+
+dayjs.extend(duration);
 
 export default class Waypoint extends AbstractView {
   constructor(waypoint) {

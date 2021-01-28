@@ -4,11 +4,12 @@ import {isOnline} from "../utils/utils.js";
 import {UpdateType, UserAction} from "../const.js";
 
 export default class WaypointNew {
-  constructor(tripContainer, changeData, updateAddButton, renderToast) {
+  constructor(tripContainer, changeData, updateAddButton, renderToast, removeToast) {
     this._tripContainer = tripContainer;
     this._changeData = changeData;
     this._updateAddButton = updateAddButton;
     this._renderToast = renderToast;
+    this._removeToast = removeToast;
 
     this._waypointFormComponent = null;
 
@@ -34,6 +35,7 @@ export default class WaypointNew {
 
   destroy() {
     if (this._waypointFormComponent !== null) {
+      this._removeToast();
       remove(this._waypointFormComponent);
       this._waypointFormComponent = null;
       document.removeEventListener(`keydown`, this._escKeyDownHandler);
@@ -50,11 +52,13 @@ export default class WaypointNew {
 
   setAborting() {
     const resetFormState = () => {
-      this._waypointFormComponent.updateData({
-        isDisabled: false,
-        isSaving: false,
-        isDeleting: false
-      });
+      if (this._waypointFormComponent) {
+        this._waypointFormComponent.updateData({
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false
+        });
+      }
     };
 
     this._waypointFormComponent.shake(resetFormState);
@@ -70,6 +74,42 @@ export default class WaypointNew {
   _handleFormSubmit(waypoint) {
     if (!isOnline()) {
       const message = `You can't create waypoint offline`;
+
+      this.setAborting();
+      this._renderToast(this._waypointFormComponent, message);
+
+      return;
+    }
+
+    if (this._destinationsModel.getDestination(waypoint.destination.name) === undefined) {
+      const message = `Destination field has invalid value. Please choose one from the list`;
+
+      this.setAborting();
+      this._renderToast(this._waypointFormComponent, message);
+
+      return;
+    }
+
+    if (waypoint.startDate === ``) {
+      const message = `Start date is invalid`;
+
+      this.setAborting();
+      this._renderToast(this._waypointFormComponent, message);
+
+      return;
+    }
+
+    if (waypoint.endDate === ``) {
+      const message = `End date is invalid`;
+
+      this.setAborting();
+      this._renderToast(this._waypointFormComponent, message);
+
+      return;
+    }
+
+    if (waypoint.price === ``) {
+      const message = `Price is invalid`;
 
       this.setAborting();
       this._renderToast(this._waypointFormComponent, message);

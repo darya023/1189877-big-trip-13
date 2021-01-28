@@ -11,7 +11,7 @@ export default class Offers extends Observer {
   }
 
   getOffers(currentWaypointName, isForModel) {
-    let offers = this._offers.filter((currentOffers) => currentOffers.typeName.toLowerCase() === currentWaypointName.toLowerCase())[0].offers;
+    const offers = this._offers.filter((currentOffers) => currentOffers.typeName.toLowerCase() === currentWaypointName.toLowerCase())[0].offers;
 
     if (!isForModel) {
       for (const offer of offers) {

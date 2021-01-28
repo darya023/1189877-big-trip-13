@@ -44,7 +44,7 @@ const createTotalPrice = (prices, offers) => {
 };
 
 const createTripInfoTemplate = (waypoints) => {
-  let sortByDateWaypoints = waypoints.slice();
+  const sortByDateWaypoints = waypoints.slice();
 
   sortByDateWaypoints.sort((a, b) => a.startDate - b.startDate);
 

@@ -66,13 +66,11 @@ export default class Filter {
       {
         type: FilterType.FUTURE,
         name: FilterType.FUTURE,
-        // name: `future`,
         disable: !filter[FilterType.FUTURE](waypoints).some(Boolean),
       },
       {
         type: FilterType.PAST,
         name: FilterType.PAST,
-        // name: `past`,
         disable: !filter[FilterType.PAST](waypoints).some(Boolean),
       },
     ];
